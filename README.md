@@ -1,8 +1,11 @@
+
 # Picture Plane
 
 An interactive **Jolt + [Slipstream](https://github.com/jlt-commons/slipstream)** vector-feedback instrument. A rectangular picture plane and crosshair are injected into a feedback loop; previous frames are repeatedly reprojected through a movable pinhole camera, faded, and colored by age.
 
 Pan, dolly, roll, yaw, and pitch produce spirals, tunnels, and keystone distortion. Camera changes propagate through existing feedback rather than replacing it with a newly generated static stack.
+
+https://github.com/user-attachments/assets/95a155ef-22c5-4353-a9a2-a4f93ed8ab40
 
 ## Build and run
 
