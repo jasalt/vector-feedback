@@ -3,7 +3,10 @@
 ;; Row-major homogeneous matrices. Coordinates use an undistorted Y-up plane.
 (def identity-matrix [1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0])
 (def depth 48)
-(def tick (/ 1.0 30.0))
+;; Keep mat3 uniforms within OpenGL 3.3's minimum fragment-uniform budget.
+(def min-depth 8)
+(def max-depth 78)
+(def tick (/ 1.0 60.0))
 (def defaults {:pan-x 0.008 :pan-y 0.0 :zoom 0.965
                :roll 0.025 :yaw 0.012 :pitch -0.008 :decay 0.955})
 (defn clamp [x lo hi] (max lo (min hi x)))
@@ -34,11 +37,16 @@
         placement [zoom 0.0 pan-x 0.0 zoom pan-y 0.0 0.0 1.0]]
     (multiply placement rotation)))
 (defn initial-state []
-  {:camera defaults :history [] :pending 0.0 :time 0.0 :paused false :input {}})
-(defn feedback-step [history camera]
-  (let [h (camera-matrix camera)]
-    (into [identity-matrix]
-          (take (dec depth) (map #(multiply h %) history)))))
+  {:camera defaults :tail depth :history [] :pending 0.0 :time 0.0 :paused false :input {}})
+(defn feedback-step
+  ([history camera] (feedback-step history camera depth))
+  ([history camera tail]
+   (let [h (camera-matrix camera)]
+     (into [identity-matrix]
+           (take (dec tail) (map #(multiply h %) history))))))
+(defn resize-tail [state delta]
+  (let [tail (clamp (+ (:tail state) delta) min-depth max-depth)]
+    (assoc state :tail tail :history (vec (take tail (:history state))))))
 (defn advance [state dt]
   (if (:paused state)
     state
@@ -46,7 +54,7 @@
           steps (long (/ elapsed tick))]
       (assoc state :pending (- elapsed (* steps tick))
              :time (+ (:time state) (* steps tick))
-             :history (nth (iterate #(feedback-step % (:camera state)) (:history state)) steps)))))
+             :history (nth (iterate #(feedback-step % (:camera state) (:tail state)) (:history state)) steps)))))
 (defn update-input [state input]
   (let [previous (:input state)
         [x y] (:mouse input [0.0 0.0])
@@ -56,6 +64,8 @@
     (if (rising? :r)
       (assoc (initial-state) :input input)
       (-> state
+          (resize-tail (+ (if (rising? :increase-tail) 10 0)
+                          (if (rising? :decrease-tail) -10 0)))
           (update :paused #(if (rising? :space) (not %) %))
           (update :camera
                   (fn [c]

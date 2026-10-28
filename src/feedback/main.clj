@@ -1,11 +1,22 @@
 (ns feedback.main
   (:require [glimmer.core :as ui]
             [glimmer.ratom :as r]
+            [jolt.ffi :as ffi]
             [slipstream.glimmer :as sg]
             [slipstream.glimmer-renderer :as renderer]
             [feedback.model :as model]
             [feedback.visuals :as visuals])
   (:import [java.io File FileOutputStream]))
+
+;; GLFW is linked into Slipstream; use its public API for keys not exposed
+;; by Slipstream's fixed input snapshot. Called only on the GL/UI thread.
+(ffi/defcfn glfw-current-window "glfwGetCurrentContext" [] :pointer)
+(ffi/defcfn glfw-key "glfwGetKey" [:pointer :int32] :int32)
+(defn tail-keys []
+  (let [window (glfw-current-window)
+        down? (fn [key] (= 1 (glfw-key window key)))]
+    {:increase-tail (or (down? 61) (down? 334)) ; =/+ and keypad +
+     :decrease-tail (or (down? 45) (down? 333))})) ; - and keypad -
 
 (defonce state (r/atom (model/initial-state)))
 (def bounds [-1.6 1.6 -1.0 1.0])
@@ -62,7 +73,7 @@
               (when-let [context (sg/current-context)]
                 (let [now (System/nanoTime)
                       dt (if @previous (/ (- now @previous) 1.0e9) model/tick)
-                      input (assoc (renderer/input-snapshot context)
+                      input (assoc (merge (renderer/input-snapshot context) (tail-keys))
                                    :mouse (current-mouse context))]
                   (reset! previous now)
                   ;; Timed captures use deterministic steps, independent of GPU speed.

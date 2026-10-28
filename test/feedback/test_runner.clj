@@ -43,6 +43,23 @@
   (is (= [1 4 7 2 5 8 3 6 9] (v/column-major [1 2 3 4 5 6 7 8 9])))
   (is (= (+ 2 m/depth) (count (:uniforms (v/effect (m/initial-state))))))
   (is (= :mat3 (get-in (v/effect (m/initial-state)) [:uniforms :frame0 :type]))))
+(deftest tail-controls
+  (let [s (nth (iterate #(m/advance % m/tick) (m/initial-state)) 60)
+        longer (m/update-input s {:increase-tail true})
+        shorter (m/update-input s {:decrease-tail true})]
+    (is (= 58 (:tail longer)))
+    (is (= 58 (:tail (m/update-input longer {:increase-tail true}))))
+    (is (= 68 (:tail (-> longer (m/update-input {})
+                                (m/update-input {:increase-tail true})))))
+    (is (= 38 (:tail shorter)))
+    (is (= 38 (count (:history shorter))))
+    (is (= 58 (count (:history (nth (iterate #(m/advance % m/tick) longer) 20)))))
+    (is (= 38 (:tail (m/update-input (assoc s :paused true) {:decrease-tail true}))))
+    (is (= m/max-depth (:tail (m/resize-tail s 1000))))
+    (is (= m/min-depth (:tail (m/resize-tail s -1000))))
+    (is (= m/depth (:tail (m/update-input longer {:r true}))))
+    (is (= 60 (count (:uniforms (v/effect longer)))))
+    (is (not= (:fragment-hook (v/effect s)) (:fragment-hook (v/effect longer))))))
 (defn -main [& _]
   (let [{:keys [fail error]} (run-tests 'feedback.test-runner)]
     (when (pos? (+ fail error)) (System/exit 1))))

@@ -31,9 +31,12 @@ Or set `SLIPSTREAM_TEST_FONT`.
 | Right drag | Yaw / pitch (perspective tilt) |
 | Middle drag | Roll |
 | Mouse wheel | Dolly / magnification |
+| `+` / `-` (or keypad `+` / `-`) | Increase / decrease tail by 10 frames |
 | Space | Pause / resume feedback |
 | R | Reset camera and clear feedback |
 | Close window | Quit |
+
+The tail starts at 48 frames and ranges from 8 to 78 frames (bounded for OpenGL 3.3 uniform limits). Each key press changes it once; `=` also works as `+`. Shortening discards old frames immediately, even while paused; lengthening fills the extra history as feedback runs. Reset restores 48 frames.
 
 Drag adjustments are relative and remain set after release. The initial camera has a gentle shrink, roll, and tilt, so feedback starts without interaction. A mouse with three buttons is recommended. Camera parameters remain editable while paused; feedback resumes with the new settings.
 
@@ -57,10 +60,10 @@ Capture is a top-down RGB PPM. Timed runs advance one feedback tick per rendered
 
 ## Implementation
 
-- `src/feedback/model.clj`: pure camera homographies, input, and bounded 30 Hz temporal simulation.
+- `src/feedback/model.clj`: pure camera homographies, input, and bounded 60 Hz temporal simulation.
 - `src/feedback/visuals.clj`: Slipstream scene, projective vector coverage shader, and control readout.
 - `src/feedback/main.clj`: native window/input lifecycle and optional capture.
 
-The loop retains 48 vector-frame homographies. Each tick applies the current camera to all surviving frames and injects a new rectangle. Slipstream renders a single immutable vector quad; typed `mat3` uniforms inverse-project each pixel into each retained frame, where rectangle/crosshair coverage is analytically antialiased. Geometry/atlases are not rebuilt every frame, and the normal loop performs no framebuffer readback.
+The loop initially retains 48 vector-frame homographies, adjustable with `+` / `-`. Each tick applies the current camera to all surviving frames and injects a new rectangle. Slipstream renders a single immutable vector quad; typed `mat3` uniforms inverse-project each pixel into each retained frame, where rectangle/crosshair coverage is analytically antialiased. Geometry/atlases are not rebuilt every frame, and the normal loop performs no framebuffer readback.
 
-This is **vector feedback**, not a webcam feed or recursive framebuffer texture effect: vectors remain crisp under reprojection, history is finite (1.6 seconds), and there is no raster blur or external video input. The camera controls describe the per-pass feedback transform, as in a camera pointed at its own monitor.
+This is **vector feedback**, not a webcam feed or recursive framebuffer texture effect: vectors remain crisp under reprojection, history is finite (0.8 seconds initially; adjustable from approximately 0.13 to 1.3 seconds), and there is no raster blur or external video input. The camera controls describe the per-pass feedback transform, as in a camera pointed at its own monitor.
