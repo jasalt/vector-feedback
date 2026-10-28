@@ -14,6 +14,9 @@ namespace {
 void* context;
 std::vector<SSGLDrawCommand> commands;
 int frames = 0;
+#ifdef WEB_JOLT_HOST
+bool deterministic = false;
+#endif
 void check(int result) {
   if(result != 0) { std::fprintf(stderr, "Slipstream: %s\n", ss_last_error()); std::abort(); }
 }
@@ -43,7 +46,14 @@ void frame() {
     std::abort();
   }
   check(ss_gl_swap(context));
-  if(++frames == 3) {
+  ++frames;
+#ifdef WEB_JOLT_HOST
+  if(deterministic && frames == 65) {
+    EM_ASM({window.fixtureDone = true;});
+    emscripten_pause_main_loop();
+  }
+#endif
+  if(frames == 3) {
 #ifdef WEB_JOLT_HOST
     EM_ASM({window.witnessReady = true;});
 #else
@@ -67,6 +77,14 @@ int main() {
   std::printf("GL: %s\n", glGetString(GL_VERSION));
 #ifdef WEB_JOLT_HOST
   bool feedback = true;
+  deterministic = EM_ASM_INT({return new URLSearchParams(location.search).has('deterministic');});
+  std::vector<float> expected;
+  for(const auto& uniform : feedback_uniforms)
+    expected.insert(expected.end(), uniform.values, uniform.values + uniform.components);
+  EM_ASM({
+    document.querySelector('h1').textContent = 'Picture Plane — Jolt + Slipstream WebGL2';
+    window.expectedPayload = Array.from(HEAPF32.subarray($0 >> 2, ($0 >> 2) + $1));
+  }, expected.data(), expected.size());
 #else
   bool feedback = EM_ASM_INT({return new URLSearchParams(location.search).get('scene') === 'feedback';});
 #endif
@@ -129,8 +147,20 @@ extern "C" int web_scene_input(float* out) {
   check(ss_gl_poll(context));
   SSGLInput input{};
   check(ss_gl_input_snapshot(context, &input));
+  if(EM_ASM_INT({const clear = !!window.clearWebInput; window.clearWebInput = false; return clear;})) {
+    const double x = input.x, y = input.y;
+    input = {}; input.x = x; input.y = y;
+    check(ss_gl_test_set_input(context, &input));
+  }
   SSGLFrameState dimensions{};
   check(ss_gl_test_frame_state(context, &dimensions));
+  int desired_width = EM_ASM_INT({return Math.round(Module.canvas.getBoundingClientRect().width * devicePixelRatio);});
+  int desired_height = EM_ASM_INT({return Math.round(Module.canvas.getBoundingClientRect().height * devicePixelRatio);});
+  if(desired_width > 0 && desired_height > 0 &&
+     (desired_width != dimensions.window_size[0] || desired_height != dimensions.window_size[1])) {
+    check(ss_gl_test_resize(context, desired_width, desired_height));
+    check(ss_gl_test_frame_state(context, &dimensions));
+  }
   const int width = dimensions.window_size[0], height = dimensions.window_size[1];
   out[0] = width > 0 ? -1.6f + 3.2f * input.x / width : 0;
   out[1] = height > 0 ? 1.0f - 2.0f * input.y / height : 0;
@@ -139,12 +169,14 @@ extern "C" int web_scene_input(float* out) {
   out[6] = input.space; out[7] = input.r;
   static double previous = emscripten_get_now();
   const double now = emscripten_get_now();
-  out[8] = std::clamp((now - previous) / 1000.0, 0.0, 0.1);
+  out[8] = deterministic ? 1.0 / 60.0 : std::clamp((now - previous) / 1000.0, 0.0, 0.1);
   previous = now;
   return 0;
 }
 extern "C" int web_scene_submit(const float* values) {
   if(!values) return 1;
+  if(deterministic && frames == 64)
+    EM_ASM({window.actualPayload = Array.from(HEAPF32.subarray($0 >> 2, ($0 >> 2) + 434));}, values);
   int result = ss_web_update_effect(context, commands[0].effect, values, 434);
   if(result) return result;
   EM_ASM({

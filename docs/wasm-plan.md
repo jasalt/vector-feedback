@@ -158,3 +158,24 @@ and next action. Partial witnesses must not be labeled a working Jolt port.
   reset input is wired but awaits P5 automation. Font is preloaded; publishing
   still needs its license. Toolchain remains pinned Jolt 0.8.21 experimentally,
   not the desktop application's supported-release requirement.
+
+### P5a — deterministic parity and core controls (PASS; lifecycle still partial)
+
+- Deterministic Wasm run stops after 65 rendered frames. All **434 float32
+  uniform components match native Jolt's fixture exactly** (max absolute error
+  0), including inverse matrices, decay and time. Report/screenshots:
+  `.cache/wasm/live-parity-evidence/`.
+- Automated pause (simulation time remains fixed), left/right/middle drag,
+  wheel, R reset, blur while dragging, and resize pass. A 600-frame gate reaches
+  601 frames, with zero page/console/request errors. Report:
+  `.cache/wasm/live-controls-evidence/`. Observed changed pan/yaw/pitch/roll/zoom
+  while paused; reset restores defaults. Canvas resizes to 684×428.
+- Full desktop tests now pass: 7 tests, 33 assertions, 0 failures/errors.
+  Running Nix Jolt outside its shell with host `LD_LIBRARY_PATH=/usr/lib64`
+  resolves the existing native dependency. The loader emits a harmless ncurses
+  version-info warning. Desktop 65-frame capture also exits 0 under Xvfb;
+  `.cache/wasm/desktop.ppm`. No desktop source changes were needed.
+- Added browser pointer capture, focus/wheel behavior, blur clearing,
+  device-pixel-sized canvas resize, and explicit context-loss/reload handling.
+  DPR/context-loss/background behavior and new desktop +/- tail controls still
+  need dedicated gates; P5 is not marked complete yet.

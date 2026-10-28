@@ -54,6 +54,7 @@ extern int web_scene_input(float*);
 extern int web_scene_submit(const float*);
 extern void web_scene_render(void);
 static void project_live_frame(void) {
+  if(EM_ASM_INT({return !!window.webContextLost;})) return;
   Scall0(Stop_level_value(Sstring_to_symbol("picture-plane-frame")));
   web_scene_render();
 }

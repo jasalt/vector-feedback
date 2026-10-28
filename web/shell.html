@@ -2,8 +2,10 @@
 <html lang="en"><head><meta charset="utf-8"><title>Slipstream WebGL2 witness</title><link rel="icon" href="data:,"></head>
 <body style="background:#101923;color:#d8e7ef;font-family:monospace">
 <h1>Slipstream WebGL2 — C++ platform witness</h1>
-<p id="status">loading (not a Jolt runtime)</p>
-<canvas id="canvas" width="960" height="600" tabindex="0" oncontextmenu="event.preventDefault()"></canvas>
+<p id="status">loading platform witness</p>
+<p>Left drag pan · Right drag yaw/pitch · Middle drag roll · Wheel dolly · Space pause · R reset</p>
+<button type="button" onclick="location.reload()">Reload / recover graphics context</button><br>
+<canvas id="canvas" width="960" height="600" tabindex="0" style="max-width:100%;width:960px;height:auto;touch-action:none" oncontextmenu="event.preventDefault()"></canvas>
 <pre id="log"></pre>
 <script>
 var Module = {
@@ -12,6 +14,19 @@ var Module = {
   printErr: function(text) { document.getElementById('log').textContent += text + '\n'; console.error(text); },
   onAbort: function(reason) { document.getElementById('status').textContent = 'FAIL: ' + reason; }
 };
+const canvas = Module.canvas;
+canvas.addEventListener('wheel', event => event.preventDefault(), {passive:false});
+canvas.addEventListener('pointerdown', event => {canvas.focus(); canvas.setPointerCapture(event.pointerId);});
+canvas.addEventListener('mousedown', event => {if(event.button === 1) event.preventDefault();});
+window.addEventListener('blur', () => {window.clearWebInput = true;});
+document.addEventListener('visibilitychange', () => {window.clearWebInput = true;});
+canvas.addEventListener('webglcontextlost', event => {
+  event.preventDefault(); window.webContextLost = true;
+  document.getElementById('status').textContent = 'Graphics context lost — reload to recover';
+});
+canvas.addEventListener('webglcontextrestored', () => {
+  document.getElementById('status').textContent = 'Graphics context restored — reload to rebuild Slipstream resources';
+});
 </script>
 {{{ SCRIPT }}}
 </body></html>
