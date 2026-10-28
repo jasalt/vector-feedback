@@ -3,6 +3,7 @@
 from pathlib import Path
 import sys
 
+mode = sys.argv[2] if len(sys.argv) > 2 else 'abi'
 source = Path(sys.argv[1]) / 'c/main.c'
 text = source.read_text()
 start = text.index('#ifdef __EMSCRIPTEN__')
@@ -45,4 +46,24 @@ names = ['web_define_shape_p', 'web_shape_quad_p', 'web_define_shape', 'web_read
          'ss_shape_quad', 'ss_last_error']
 text = text[:start] + 'static void project_init(void) {\n' + ''.join(
     f'  Sforeign_symbol("{name}", (void *){name});\n' for name in names) + '}\n' + text[end:]
+if mode == 'live':
+    start = text.index('static void project_start_raylib(void)')
+    end = text.index('\n#endif', start)
+    text = text[:start] + '''extern int web_scene_init(void);
+extern int web_scene_input(float*);
+extern int web_scene_submit(const float*);
+extern void web_scene_render(void);
+static void project_live_frame(void) {
+  Scall0(Stop_level_value(Sstring_to_symbol("picture-plane-frame")));
+  web_scene_render();
+}
+static void project_start_raylib(void) {
+  if(web_scene_init() != 0) abort();
+  emscripten_set_main_loop(project_live_frame, 0, 1);
+}
+''' + text[end:]
+    marker = 'static void project_init(void) {\n'
+    text = text.replace(marker, marker + '''  Sforeign_symbol("web_scene_input", (void *)web_scene_input);
+  Sforeign_symbol("web_scene_submit", (void *)web_scene_submit);
+''')
 source.write_text(text)

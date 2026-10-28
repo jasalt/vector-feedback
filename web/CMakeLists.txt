@@ -34,3 +34,7 @@ target_link_options(witness PRIVATE -fexceptions -sUSE_FREETYPE=1 -sUSE_GLFW=3
   -sASSERTIONS=1 --preload-file "${WEB_FONT}@/font.ttf"
   --shell-file "${CMAKE_CURRENT_SOURCE_DIR}/shell.html")
 set_target_properties(witness PROPERTIES SUFFIX ".html")
+add_library(slipstream_web_scene STATIC witness.cpp)
+target_compile_definitions(slipstream_web_scene PRIVATE WEB_JOLT_HOST)
+target_include_directories(slipstream_web_scene PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/..")
+target_link_libraries(slipstream_web_scene PRIVATE slipstream_web)

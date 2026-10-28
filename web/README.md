@@ -55,6 +55,19 @@ nix develop ../jolt-wasm-raylib -c bash scripts/wasm-abi-build.sh
 uv run --with playwright web/browser_smoke.py --scene abi
 ```
 
+## Live Jolt-owned feedback prototype
+
+```sh
+nix develop ../jolt-wasm-raylib -c env WASM_MODE=live bash scripts/wasm-abi-build.sh
+uv run --with playwright web/browser_smoke.py --scene live
+```
+
+Serve `.cache/wasm/chez-live/em-tpb32l/bin/tpb32l/` with COOP/COEP headers and
+open `scheme.html`. This runs shared `feedback.model` and `visuals/effect` inside
+Chez Wasm each frame, with actual Slipstream C++ graphics and a preloaded font.
+The browser prototype has a fixed 48-frame tail and a simplified HUD, not a
+complete Glimmer browser backend. See the plan for validation and limitations.
+
 The test records direct mixed uint64/float ABI failures and validates small
 pointer-based adapters. It does not claim unchanged desktop FFI compatibility.
 

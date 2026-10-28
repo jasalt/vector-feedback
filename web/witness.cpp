@@ -6,6 +6,8 @@
 #include <cstdlib>
 #include <vector>
 #include <iterator>
+#include <algorithm>
+#include <cmath>
 #include "feedback_fixture.hpp"
 
 namespace {
@@ -42,11 +44,19 @@ void frame() {
   }
   check(ss_gl_swap(context));
   if(++frames == 3) {
+#ifdef WEB_JOLT_HOST
+    EM_ASM({window.witnessReady = true;});
+#else
     EM_ASM({document.getElementById('status').textContent = 'READY: Slipstream WebGL2 geometry + font'; window.witnessReady = true;});
+#endif
   }
 }
 }
+#ifdef WEB_JOLT_HOST
+extern "C" int web_scene_init() {
+#else
 int main() {
+#endif
   SSGLContextOptions options{};
   options.title = "Slipstream WebGL2";
   options.width = 960; options.height = 600;
@@ -55,7 +65,11 @@ int main() {
   options.has_bounds = 1; options.visible = 1;
   context = owned(ss_gl_context_create(&options));
   std::printf("GL: %s\n", glGetString(GL_VERSION));
+#ifdef WEB_JOLT_HOST
+  bool feedback = true;
+#else
   bool feedback = EM_ASM_INT({return new URLSearchParams(location.search).get('scene') === 'feedback';});
+#endif
   auto* atlas = owned(ss_atlas_new(1024, 32));
   auto* canvas = owned(ss_canvas_new(atlas, 1000));
   auto* path = owned(ss_path_new());
@@ -100,5 +114,44 @@ int main() {
   check(ss_path_destroy(path));
   check(ss_canvas_destroy(canvas));
   check(ss_atlas_destroy(atlas));
+#ifdef WEB_JOLT_HOST
+  return 0;
+#else
   emscripten_set_main_loop(frame, 0, true);
+#endif
 }
+
+#ifdef WEB_JOLT_HOST
+extern "C" int ss_web_update_effect(void*, void*, const float*, int32_t) noexcept;
+extern "C" void web_scene_render() { frame(); }
+extern "C" int web_scene_input(float* out) {
+  if(!out) return 1;
+  check(ss_gl_poll(context));
+  SSGLInput input{};
+  check(ss_gl_input_snapshot(context, &input));
+  SSGLFrameState dimensions{};
+  check(ss_gl_test_frame_state(context, &dimensions));
+  const int width = dimensions.window_size[0], height = dimensions.window_size[1];
+  out[0] = width > 0 ? -1.6f + 3.2f * input.x / width : 0;
+  out[1] = height > 0 ? 1.0f - 2.0f * input.y / height : 0;
+  out[2] = input.scroll_y;
+  out[3] = input.left; out[4] = input.right; out[5] = input.middle;
+  out[6] = input.space; out[7] = input.r;
+  static double previous = emscripten_get_now();
+  const double now = emscripten_get_now();
+  out[8] = std::clamp((now - previous) / 1000.0, 0.0, 0.1);
+  previous = now;
+  return 0;
+}
+extern "C" int web_scene_submit(const float* values) {
+  if(!values) return 1;
+  int result = ss_web_update_effect(context, commands[0].effect, values, 434);
+  if(result) return result;
+  EM_ASM({
+    const status = document.getElementById('status');
+    status.textContent = `Jolt + Slipstream WebGL2 / ${$1 ? 'PAUSED' : 'LIVE'} / frame ${$0} / time ${$2.toFixed(2)} / zoom ${$3.toFixed(3)}`;
+    window.modelState = ({frames:$0, paused:!!$1, time:$2, zoom:$3, panX:$4, panY:$5, yaw:$6, pitch:$7, roll:$8});
+  }, frames, values[434], values[435], values[436], values[437], values[438], values[439], values[440], values[441]);
+  return 0;
+}
+#endif

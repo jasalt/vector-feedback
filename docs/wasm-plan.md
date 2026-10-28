@@ -23,7 +23,7 @@ platform patches to build-local copies of pinned sources.
 - [x] P3 — Validate the broader Slipstream ABI on the sibling's threaded Chez
   Wasm target: pointers, float arguments, structs, strings, counts and errors.
   Keep toolchain/Jolt revisions explicit; do not infer ABI support from build.
-- [ ] P4 — Connect Jolt model + Slipstream scene to owner-thread browser frames;
+- [x] P4 — Connect Jolt model + Slipstream scene to owner-thread browser frames;
   retain shared shader/model and native desktop adapter. Bundle a redistributable
   font and isolate browser dependencies from native shared-library loading.
 - [ ] P5 — Input/lifecycle and parity: deterministic 65-frame capture, numerical
@@ -136,3 +136,25 @@ and next action. Partial witnesses must not be labeled a working Jolt port.
 - This **does not** validate all direct Slipstream bindings or its full Glimmer
   integration. P4 will use the measured pointer/scalar adapter boundary rather
   than claim that unchanged desktop FFI works on this toolchain.
+
+### P4 — live Jolt-owned feedback (PASS prototype, not full Glimmer port)
+
+- `WASM_MODE=live` with `scripts/wasm-abi-build.sh` builds a separate
+  `chez-live` module. A named owner-thread Scheme callback resolves the live
+  Jolt `feedback.web/frame!` Var. No evaluator worker draws and C holds no
+  Scheme object pointers.
+- Jolt runs the unchanged shared model, input update and `visuals/effect` each
+  frame, writing a bounded foreign float buffer. The same actual Slipstream
+  scene/effect/atlas/FreeType code from P2 renders it. A web-only uniform-update
+  extension reuses one effect instead of leaking a cached effect per frame.
+- `web/browser_smoke.py --scene live` passes with isolation, boot token, model
+  frame progression and no browser errors. Observed frame 5/time 0.5, later
+  frame 9/time 0.88 (elapsed-time catch-up on software rendering).
+- Inspected `.cache/wasm/live-evidence/canvas.png`: colored projective rectangle
+  trails/crosshair and readable vector text. This time the model executes inside
+  the Wasm module, not only during native fixture emission.
+- Prototype fixes tail at 48; the newly added desktop +/- tail controls and
+  full Glimmer scene/HUD reconciliation are not ported. Core drag/wheel/pause/
+  reset input is wired but awaits P5 automation. Font is preloaded; publishing
+  still needs its license. Toolchain remains pinned Jolt 0.8.21 experimentally,
+  not the desktop application's supported-release requirement.
