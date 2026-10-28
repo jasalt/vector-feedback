@@ -75,3 +75,24 @@ and next action. Partial witnesses must not be labeled a working Jolt port.
   isolated Nix environment. This is not a test failure in model logic; retry
   with a suitable desktop environment separately.
 - Concurrent user changes appeared in `README.md`; leave them out of commits.
+
+### P2a — real vector geometry and font (PASS; P2 still in progress)
+
+- HTTP + Chromium 152/SwiftShader automation passes with zero page, console,
+  or request errors. Report and screenshots: `.cache/wasm/evidence/`.
+- Visually inspected `canvas.png`: a crisp green rectangular outline and readable
+  pale-blue `SLIPSTREAM / WEBGL2` above it, on a dark background. This proves
+  actual atlas/FreeType/vector rendering, not just context initialization.
+- First browser run exposed GLFW extension-query and pre-main-loop swap timing
+  issues. Enable `EXT_color_buffer_float` through Emscripten and let RAF own
+  timing. Next run exposed leading-newline GLSL ES version rejection; remove
+  that newline. A witness argument used invalid curve precision 0; corrected
+  to 32. Original failed JSON reports retained in `.cache/wasm/`.
+- Initial readiness-only gate missed invisible text (em-space translation was
+  passed directly as world-space). Screenshot inspection caught it; scale the
+  layout translation and rerun. Font is now visibly verified.
+- Automation environment: running uv/Playwright inside Nix could not load host
+  `libstdc++`; run host uv with `CHROMIUM` pointing to the shell's Chromium.
+  A 35-second tool timeout interrupted one run; a 100-second retry passed.
+- Command: `CHROMIUM=<chromium executable> uv run --with playwright
+  web/browser_smoke.py`. Full 48-matrix application shader is the next gate.

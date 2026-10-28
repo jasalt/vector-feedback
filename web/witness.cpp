@@ -20,7 +20,10 @@ void* owned(void* result) {
 void add(void* atlas, const SSLayer& layer) {
   SSGLDrawCommand command{};
   command.handle = owned(ss_gl_upload(context, atlas, &layer));
-  command.transform = layer.transform;
+  // Layout stores translation in ems; draw commands use world coordinates.
+  command.transform = {layer.transform.x * layer.scale,
+                       layer.transform.y * layer.scale,
+                       layer.transform.z * layer.scale};
   command.color = layer.color;
   command.scale = layer.scale;
   command.visible = 1;
@@ -50,7 +53,7 @@ int main() {
   options.has_bounds = 1; options.visible = 1;
   context = owned(ss_gl_context_create(&options));
   std::printf("GL: %s\n", glGetString(GL_VERSION));
-  auto* atlas = owned(ss_atlas_new(1024, 0));
+  auto* atlas = owned(ss_atlas_new(1024, 32));
   auto* canvas = owned(ss_canvas_new(atlas, 1000));
   auto* path = owned(ss_path_new());
   float rect[] = {-1.18f, -0.68f, 2.36f, 1.36f};

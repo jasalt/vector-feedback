@@ -26,5 +26,15 @@ integration will additionally need cross-origin isolation.
 
 `prepare.py` applies fail-fast platform adaptations to a disposable pinned
 source copy under `.cache/wasm/`. The original desktop source is never patched.
+Browser gate (host `uv`, with Chromium on PATH or `CHROMIUM` set):
+
+```sh
+uv run --with playwright web/browser_smoke.py
+```
+
+Diagnostics and screenshots go to `.cache/wasm/evidence/`. The gate checks
+readiness and browser errors; screenshots must also be inspected for semantic
+content. A ready canvas alone does not prove correct geometry or text.
+
 The legacy blocking GLFW example runner is deliberately not linked; the actual
 reactive renderer is driven through its existing C ABI by browser frames.

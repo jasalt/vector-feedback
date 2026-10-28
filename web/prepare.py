@@ -16,10 +16,12 @@ def replace(file, old, new, count=1):
 for file in ("reactive_renderer.hpp", "compositor.hpp"):
     replace(file, "#include <glad/glad.h>", "#include <GLES3/gl3.h>")
 for file, count in (("advanced_shaders.cpp", 2), ("compositor.cpp", 3)):
-    replace(file, "#version 330 core", "#version 300 es\nprecision highp float;\nprecision highp int;\nprecision highp sampler2D;\nprecision highp usampler2D;", count)
+    replace(file, "\n#version 330 core", "#version 300 es\nprecision highp float;\nprecision highp int;\nprecision highp sampler2D;\nprecision highp usampler2D;", count)
+replace("reactive_renderer.cpp", '#include "reactive_renderer.hpp"', '#include "reactive_renderer.hpp"\n#include <emscripten/html5.h>')
+replace("reactive_renderer.cpp", '  glfwSwapInterval(0);', '  // Browser requestAnimationFrame owns timing.')
 replace("reactive_renderer.cpp", '''  if(!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     throw std::runtime_error("gladLoadGLLoader failed");''', '''  // GLES3 functions are linked directly by Emscripten.
-  if(!glfwExtensionSupported("GL_EXT_color_buffer_float"))
+  if(!emscripten_webgl_enable_extension(emscripten_webgl_get_current_context(), "EXT_color_buffer_float"))
     throw std::runtime_error("WebGL2 EXT_color_buffer_float required by compositor");''')
 replace("reactive_renderer.cpp", '''      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
       glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);''', '''      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
