@@ -15,7 +15,7 @@ platform patches to build-local copies of pinned sources.
 ## Stages
 
 - [x] P0 — Record scope, proof order and baseline.
-- [ ] P1 — Reproducible Emscripten build of pinned Slipstream and its dependencies;
+- [x] P1 — Reproducible Emscripten build of pinned Slipstream and its dependencies;
   conditional GLES3 shader/context glue; compile an actual Slipstream C++ scene.
 - [ ] P2 — Serve and automate Chromium; record errors/readiness and inspect a
   screenshot proving Slipstream vector geometry and text in WebGL2. Exercise
@@ -59,3 +59,19 @@ and next action. Partial witnesses must not be labeled a working Jolt port.
 - Research correction: WebGL-capable dependencies make the graphics work a
   platform integration task; its difficulty is not established until tested.
   The broad Slipstream FFI is unvalidated, not known to be unsupported.
+
+### P1 — C++ platform build (PASS compilation only)
+
+- `nix develop ../jolt-wasm-raylib -c bash scripts/wasm-build.sh` exited 0.
+  Emscripten 6.0.8, C++20, pinned Slipstream/Slughorn/MSDFgen, Emscripten
+  FreeType port. Generated log: `.cache/wasm/build.log`.
+- Added a separate static target, GLES3 headers/direct symbols, GLSL ES 3.00
+  precision qualifiers, GLES context hints and explicit compositor extension
+  requirement. Only a disposable source copy is changed.
+- Witness builds a stroked rectangle and FreeType text through the real C ABI;
+  browser rendering is still unverified until P2. No Chez/Jolt integration yet.
+- Baseline attempt `nix develop ../jolt-wasm-raylib -c jolt -M:test` failed
+  before tests: native `libslipstream.so` cannot find `libfreetype.so.6` in that
+  isolated Nix environment. This is not a test failure in model logic; retry
+  with a suitable desktop environment separately.
+- Concurrent user changes appeared in `README.md`; leave them out of commits.
