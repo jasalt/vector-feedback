@@ -1,0 +1,10 @@
+{:paths ["src"]
+ :deps {io.github.jlt-commons/slipstream
+        {:git/url "https://github.com/jlt-commons/slipstream.git"
+         :git/sha "d2f7f3d87a37ffcf25e66c27b88e91d4480ea308"}}
+ :jolt/native [{:name "slipstream"
+                :linux ["native/libslipstream.so"]
+                :darwin ["native/libslipstream.dylib"]}]
+ :aliases {:run {:main-opts ["-m" "feedback.main"]}
+           :test {:replace-deps {} :extra-paths ["test"]
+                  :main-opts ["-m" "feedback.test-runner"]}}}
