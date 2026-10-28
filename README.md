@@ -4,6 +4,19 @@ An interactive **Jolt + [Slipstream](https://github.com/jlt-commons/slipstream)*
 
 Pan, dolly, roll, yaw, and pitch produce spirals, tunnels, and keystone distortion. Camera changes propagate through existing feedback rather than replacing it with a newly generated static stack.
 
+## Quick start on Fedora Linux (Nix)
+
+With `native/libslipstream.so` already built (see below, or use the library built in the shared VM workspace), run from this project directory:
+
+```sh
+LD_LIBRARY_PATH=/usr/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} \
+  nix run 'git+https://github.com/jolt-lang/jolt.git?submodules=1' -- -M:run
+```
+
+FreeType must be installed on the host (`sudo dnf install freetype`). Even when it is installed, the Nix-provided Jolt may not find Fedora's shared libraries automatically; `LD_LIBRARY_PATH` lets the loader find `libfreetype.so.6` in `/usr/lib64`.
+
+This is a quick-start workaround, not a portable Nix package: a VM-built library must be compatible with the host's C++ and glibc runtimes. A fully Nix-managed build of Slipstream and its dependencies avoids mixing those runtimes.
+
 ## Build and run
 
 Requires Jolt **0.8.23+**, Git, CMake, a C++20 compiler, Python 3 (GLAD generation), pkg-config, FreeType development headers, and OpenGL. Linux also needs GLFW's X11/Wayland development dependencies. CMake fetches GLFW, GLAD, and msdfgen; the setup script fetches pinned Slughorn sources and its JSON submodule. First build requires network access.
