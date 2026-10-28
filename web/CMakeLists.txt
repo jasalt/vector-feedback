@@ -28,6 +28,7 @@ target_compile_options(slipstream_web PUBLIC -fexceptions -sUSE_FREETYPE=1)
 target_link_libraries(slipstream_web PRIVATE msdfgen-core)
 add_executable(witness witness.cpp)
 target_link_libraries(witness PRIVATE slipstream_web)
+target_include_directories(witness PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/..")
 target_link_options(witness PRIVATE -fexceptions -sUSE_FREETYPE=1 -sUSE_GLFW=3
   -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sALLOW_MEMORY_GROWTH=1
   -sASSERTIONS=1 --preload-file "${WEB_FONT}@/font.ttf"

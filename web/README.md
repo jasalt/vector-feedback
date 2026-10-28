@@ -18,6 +18,11 @@ In this workspace the existing locked sibling shell can supply the tools:
 nix develop ../jolt-wasm-raylib -c bash scripts/wasm-build.sh
 ```
 
+The build also requires native Jolt (`JOLT` override). It emits the current
+application effect and a deterministic 65-tick/48-history fixture without loading
+the desktop native dependency. `?scene=feedback` renders that fixture through
+Slipstream's mat3 effect interface; it is not yet live Jolt execution in Wasm.
+
 Set `WEB_FONT` if Adwaita Mono is not installed. The font is preloaded at build
 time, not resolved from browser host paths. Before publishing, supply and ship
 its license. This witness requires WebGL2 and EXT_color_buffer_float for
@@ -30,6 +35,7 @@ Browser gate (host `uv`, with Chromium on PATH or `CHROMIUM` set):
 
 ```sh
 uv run --with playwright web/browser_smoke.py
+uv run --with playwright web/browser_smoke.py --scene feedback
 ```
 
 Diagnostics and screenshots go to `.cache/wasm/evidence/`. The gate checks

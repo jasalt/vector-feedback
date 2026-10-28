@@ -5,6 +5,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
+#include <iterator>
+#include "feedback_fixture.hpp"
 
 namespace {
 void* context;
@@ -53,6 +55,7 @@ int main() {
   options.has_bounds = 1; options.visible = 1;
   context = owned(ss_gl_context_create(&options));
   std::printf("GL: %s\n", glGetString(GL_VERSION));
+  bool feedback = EM_ASM_INT({return new URLSearchParams(location.search).get('scene') === 'feedback';});
   auto* atlas = owned(ss_atlas_new(1024, 32));
   auto* canvas = owned(ss_canvas_new(atlas, 1000));
   auto* path = owned(ss_path_new());
@@ -62,10 +65,27 @@ int main() {
   SSKey key{1, 0, "rectangle"};
   check(ss_canvas_stroke(canvas, path, &key, 0.012f, {0.2f, 0.95f, 0.65f, 1},
     1, 0, 0, 0, 0, 0, 4, 0, 0, &rectangle));
+  SSLayer plane{};
+  if(feedback) {
+    check(ss_path_command(path, 0, nullptr, 0));
+    float quad[] = {0, 0, 3.2f, 2.0f};
+    check(ss_path_command(path, 14, quad, 4));
+    SSKey plane_key{1, 0, "picture-plane"};
+    check(ss_canvas_fill(canvas, path, &plane_key, {1, 1, 1, 1},
+                        1, 0, 0, 0, 0, 0, &plane));
+    plane.transform = {-1.6f, -1.0f, 0};
+  }
   SSFontLoadResult font{};
   check(ss_font_load(atlas, "/font.ttf", nullptr, 0, 1, false, 0, &font));
   check(ss_atlas_build(atlas));
-  add(atlas, rectangle);
+  if(feedback) {
+    add(atlas, plane);
+    commands.back().effect = owned(ss_gl_effect_program(context, "feedback-48", "fixture-65",
+      feedback_declarations, "", feedback_hook, 0, feedback_uniforms, std::size(feedback_uniforms)));
+    commands.back().effect_id = 1;
+  } else {
+    add(atlas, rectangle);
+  }
   const char* title = "SLIPSTREAM / WEBGL2";
   std::vector<uint32_t> text;
   for(const char* p = title; *p; ++p) text.push_back(*p);

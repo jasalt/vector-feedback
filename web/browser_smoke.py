@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """HTTP/Chromium gate. Run with: uv run --with playwright web/browser_smoke.py"""
+import argparse
 import functools
 import hashlib
 import http.server
@@ -11,14 +12,17 @@ import threading
 
 from playwright.sync_api import sync_playwright
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--scene', choices=['geometry', 'feedback'], default='geometry')
+args = parser.parse_args()
 root = Path(__file__).resolve().parent.parent
-output = root / ".cache/wasm/evidence"
+output = root / '.cache/wasm' / ('evidence' if args.scene == 'geometry' else 'feedback-evidence')
 output.mkdir(parents=True, exist_ok=True)
 handler = functools.partial(http.server.SimpleHTTPRequestHandler,
                             directory=str(root / ".cache/wasm/build"))
 server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
 threading.Thread(target=server.serve_forever, daemon=True).start()
-report = {"pageErrors": [], "consoleErrors": [], "requestFailures": [], "messages": []}
+report = {"scene": args.scene, "pageErrors": [], "consoleErrors": [], "requestFailures": [], "messages": []}
 try:
     with sync_playwright() as p:
         browser = p.chromium.launch(
@@ -30,7 +34,7 @@ try:
         page.on("console", lambda m: report["consoleErrors" if m.type == "error" else "messages"].append(m.text))
         page.on("requestfailed", lambda r: report["requestFailures"].append({"url": r.url, "failure": r.failure}))
         try:
-            page.goto(f"http://127.0.0.1:{server.server_port}/witness.html")
+            page.goto(f"http://127.0.0.1:{server.server_port}/witness.html?scene={args.scene}")
             page.wait_for_function("window.witnessReady === true", timeout=45000)
             page.wait_for_timeout(1000)
             report["ready"] = True

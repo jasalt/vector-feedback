@@ -17,7 +17,7 @@ platform patches to build-local copies of pinned sources.
 - [x] P0 — Record scope, proof order and baseline.
 - [x] P1 — Reproducible Emscripten build of pinned Slipstream and its dependencies;
   conditional GLES3 shader/context glue; compile an actual Slipstream C++ scene.
-- [ ] P2 — Serve and automate Chromium; record errors/readiness and inspect a
+- [x] P2 — Serve and automate Chromium; record errors/readiness and inspect a
   screenshot proving Slipstream vector geometry and text in WebGL2. Exercise
   typed effect uniforms (especially mat3) and the application's full shader.
 - [ ] P3 — Validate the broader Slipstream ABI on the sibling's threaded Chez
@@ -96,3 +96,19 @@ and next action. Partial witnesses must not be labeled a working Jolt port.
   A 35-second tool timeout interrupted one run; a 100-second retry passed.
 - Command: `CHROMIUM=<chromium executable> uv run --with playwright
   web/browser_smoke.py`. Full 48-matrix application shader is the next gate.
+
+### P2b — full application effect (PASS)
+
+- Native Jolt emits the **current** `visuals/effect` shader and uniforms after
+  65 deterministic steps with `:tail 48`. No shader or homography reimplementation
+  in C++; only a generated header under `.cache/wasm/`.
+- Current desktop sources changed during this task (fragment is now generated
+  per tail length). The fixture follows the public effect result, not the
+  earlier removed `visuals/fragment` Var. Desktop files remain untouched.
+- Rebuilt and ran `web/browser_smoke.py --scene feedback`: exit 0, no browser
+  diagnostics. Screenshot `.cache/wasm/feedback-evidence/canvas.png` inspected:
+  many colored shrinking/rotated/projectively tilted rectangle outlines and
+  central crosshair trails, with readable Slipstream title. All 48 mat3 uniforms
+  compile/link and render through the real Slipstream effect interface.
+- This is a static Jolt-authored fixture rendered by C++, **not** Jolt executing
+  in Wasm or interactive model execution. Those are P3/P4.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-for tool in emcmake emcc cmake python3 git; do
+for tool in emcmake emcc cmake python3 git "${JOLT:-jolt}"; do
   command -v "$tool" >/dev/null || { echo "Missing $tool: enter an Emscripten shell (see web/README.md)." >&2; exit 1; }
 done
 build="$PWD/.cache/wasm"
@@ -23,6 +23,11 @@ git -C "$build/sources/slipstream" archive HEAD | tar -x -C "$build/slipstream-w
 python3 web/prepare.py "$build/slipstream-web"
 font="${WEB_FONT:-/usr/share/fonts/adwaita-mono-fonts/AdwaitaMono-Regular.ttf}"
 [[ -f "$font" ]] || { echo 'Set WEB_FONT to a redistributable TTF font.' >&2; exit 1; }
+# Emit from the shared application with native Jolt, outside the desktop project
+# so deps.edn cannot try to load its native shared library in the build shell.
+root="$PWD"
+(cd "$build" && "${JOLT:-jolt}" -Scp "$root/src:$root/web" \
+  -m feedback-fixture "$build/feedback_fixture.hpp")
 emcmake cmake -S web -B "$build/build" -DCMAKE_BUILD_TYPE=Release \
   -DSLIPSTREAM_SOURCE="$build/slipstream-web" \
   -DSLUGHORN_SOURCE="$build/sources/slughorn" -DWEB_FONT="$font"
