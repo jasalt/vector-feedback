@@ -20,7 +20,7 @@ platform patches to build-local copies of pinned sources.
 - [x] P2 — Serve and automate Chromium; record errors/readiness and inspect a
   screenshot proving Slipstream vector geometry and text in WebGL2. Exercise
   typed effect uniforms (especially mat3) and the application's full shader.
-- [ ] P3 — Validate the broader Slipstream ABI on the sibling's threaded Chez
+- [x] P3 — Validate the broader Slipstream ABI on the sibling's threaded Chez
   Wasm target: pointers, float arguments, structs, strings, counts and errors.
   Keep toolchain/Jolt revisions explicit; do not infer ABI support from build.
 - [ ] P4 — Connect Jolt model + Slipstream scene to owner-thread browser frames;
@@ -112,3 +112,27 @@ and next action. Partial witnesses must not be labeled a working Jolt port.
   compile/link and render through the real Slipstream effect interface.
 - This is a static Jolt-authored fixture rendered by C++, **not** Jolt executing
   in Wasm or interactive model execution. Those are P3/P4.
+
+### P3 — real Jolt/Slipstream ABI (PARTIAL direct; PASS pointer adaptation)
+
+- Built a private copy of the sibling's matched threaded Chez/libffi runtime,
+  linked pthread-compiled Slipstream/MSDFgen/FreeType and registered real C ABI
+  symbols. No sibling or dependency-cache edits. Script:
+  `nix develop ../jolt-wasm-raylib -c bash scripts/wasm-abi-build.sh`.
+- Chromium under COOP/COEP reaches `SLIPSTREAM-WASM-ABI-PASS`, with zero page,
+  console or request errors. Report: `.cache/wasm/abi-evidence/browser.json`.
+- Direct mixed `ss_path_command(pointer,uint32,pointer,uint64)` fails argument
+  count validation, although a single-argument uint64 probe sees `4` correctly.
+  Direct mixed float define-shape probe receives scale `0`, not `1.0`.
+  Float memory probe correctly reads `-1.18`. These are measured target ABI
+  problems, not missing WebGL support. No upstream runtime patch is applied.
+- Small web-only adapters widen bounded uint32 counts in C and read float
+  arguments from pointers. Through these adapters Jolt creates/builds an atlas,
+  defines a rectangle, reads real shape structs/floats, scales its output quad,
+  checks bool return, gets a borrowed error string and releases foreign memory.
+- Initial test erroneously wrote nil to a pointer field; use `ffi/null`.
+  Initial C linker selected nonexception C++ libraries; use
+  `-sDEFAULT_TO_CXX=1 -fexceptions`. Failure logs/JSON retained in cache.
+- This **does not** validate all direct Slipstream bindings or its full Glimmer
+  integration. P4 will use the measured pointer/scalar adapter boundary rather
+  than claim that unchanged desktop FFI works on this toolchain.

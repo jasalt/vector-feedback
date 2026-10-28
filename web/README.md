@@ -42,5 +42,21 @@ Diagnostics and screenshots go to `.cache/wasm/evidence/`. The gate checks
 readiness and browser errors; screenshots must also be inspected for semantic
 content. A ready canvas alone does not prove correct geometry or text.
 
+## Experimental Jolt ABI gate
+
+Requires the sibling's prepared EXP-018 native host/target pack, EXP-014 libffi,
+EXP-017 Chez tree and pinned Jolt archive (see that project's EXP-018 commands).
+This is currently an integration experiment, **not a clean-room bootstrap**.
+`WASM_REFERENCE` overrides the sibling path. It is read-only; all changes/builds
+are in this project's `.cache/wasm/`.
+
+```sh
+nix develop ../jolt-wasm-raylib -c bash scripts/wasm-abi-build.sh
+uv run --with playwright web/browser_smoke.py --scene abi
+```
+
+The test records direct mixed uint64/float ABI failures and validates small
+pointer-based adapters. It does not claim unchanged desktop FFI compatibility.
+
 The legacy blocking GLFW example runner is deliberately not linked; the actual
 reactive renderer is driven through its existing C ABI by browser frames.
