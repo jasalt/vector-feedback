@@ -8,6 +8,7 @@
 #include <iterator>
 #include <algorithm>
 #include <cmath>
+#include <string>
 #include "feedback_fixture.hpp"
 
 namespace {
@@ -16,6 +17,7 @@ std::vector<SSGLDrawCommand> commands;
 int frames = 0;
 #ifdef WEB_JOLT_HOST
 bool deterministic = false;
+int active_tail = 48;
 #endif
 void check(int result) {
   if(result != 0) { std::fprintf(stderr, "Slipstream: %s\n", ss_last_error()); std::abort(); }
@@ -159,6 +161,9 @@ extern "C" int web_scene_input(float* out) {
   if(desired_width > 0 && desired_height > 0 &&
      (desired_width != dimensions.window_size[0] || desired_height != dimensions.window_size[1])) {
     check(ss_gl_test_resize(context, desired_width, desired_height));
+    // Emscripten GLFW also writes CSS dimensions. Keep CSS logical pixels
+    // independent of backing-store pixels, avoiding a DPR resize feedback loop.
+    EM_ASM({Module.canvas.style.width = '960px'; Module.canvas.style.height = 'auto';});
     check(ss_gl_test_frame_state(context, &dimensions));
   }
   const int width = dimensions.window_size[0], height = dimensions.window_size[1];
@@ -170,20 +175,48 @@ extern "C" int web_scene_input(float* out) {
   static double previous = emscripten_get_now();
   const double now = emscripten_get_now();
   out[8] = deterministic ? 1.0 / 60.0 : std::clamp((now - previous) / 1000.0, 0.0, 0.1);
+  out[9] = EM_ASM_INT({return !!window.webIncreaseTail;});
+  out[10] = EM_ASM_INT({return !!window.webDecreaseTail;});
   previous = now;
+  return 0;
+}
+extern "C" int web_scene_set_tail(int32_t tail, const char* hook, const char* declarations, const float* values) {
+  if(tail < 8 || tail > 78 || !hook || !declarations || !values) return 1;
+  std::vector<std::string> names{"u_decay", "u_time"};
+  for(int i = 0; i < tail; ++i) names.push_back("u_frame" + std::to_string(i));
+  std::sort(names.begin(), names.end());
+  std::vector<SSGLUniform> uniforms;
+  size_t offset = 0;
+  for(const auto& name : names) {
+    SSGLUniform uniform{};
+    uniform.name = name.c_str();
+    const bool scalar = name == "u_time" || name == "u_decay";
+    uniform.type = scalar ? 0 : 16;
+    uniform.components = scalar ? 1 : 9;
+    std::copy(values + offset, values + offset + uniform.components, uniform.values);
+    offset += uniform.components;
+    uniforms.push_back(uniform);
+  }
+  const std::string key = "web-tail-" + std::to_string(tail);
+  auto* effect = ss_gl_effect_program(context, key.c_str(), key.c_str(), declarations,
+                                     "", hook, 0, uniforms.data(), uniforms.size());
+  if(!effect) { std::fprintf(stderr, "Slipstream tail shader: %s\\n", ss_last_error()); return 1; }
+  commands[0].effect = effect;
+  active_tail = tail;
   return 0;
 }
 extern "C" int web_scene_submit(const float* values) {
   if(!values) return 1;
+  const int components = 2 + active_tail * 9;
   if(deterministic && frames == 64)
     EM_ASM({window.actualPayload = Array.from(HEAPF32.subarray($0 >> 2, ($0 >> 2) + 434));}, values);
-  int result = ss_web_update_effect(context, commands[0].effect, values, 434);
+  int result = ss_web_update_effect(context, commands[0].effect, values, components);
   if(result) return result;
   EM_ASM({
     const status = document.getElementById('status');
-    status.textContent = `Jolt + Slipstream WebGL2 / ${$1 ? 'PAUSED' : 'LIVE'} / frame ${$0} / time ${$2.toFixed(2)} / zoom ${$3.toFixed(3)}`;
-    window.modelState = ({frames:$0, paused:!!$1, time:$2, zoom:$3, panX:$4, panY:$5, yaw:$6, pitch:$7, roll:$8});
-  }, frames, values[434], values[435], values[436], values[437], values[438], values[439], values[440], values[441]);
+    status.textContent = `Jolt + Slipstream WebGL2 / ${$1 ? 'PAUSED' : 'LIVE'} / frame ${$0} / time ${$2.toFixed(2)} / zoom ${$3.toFixed(3)} / tail ${$9}`;
+    window.modelState = ({frames:$0, paused:!!$1, time:$2, zoom:$3, panX:$4, panY:$5, yaw:$6, pitch:$7, roll:$8, tail:$9});
+  }, frames, values[components], values[components+1], values[components+2], values[components+3], values[components+4], values[components+5], values[components+6], values[components+7], active_tail);
   return 0;
 }
 #endif

@@ -10,6 +10,7 @@ start = text.index('#ifdef __EMSCRIPTEN__')
 end = text.index('/****\n  CUSTOM_INIT', start)
 text = text[:start] + '''#ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
 #include "slipstream_shim.h"
 static int32_t web_u64_low(uint64_t count) { return (int32_t)count; }
 static int32_t web_u64_high(uint64_t count) { return (int32_t)(count >> 32); }
@@ -52,9 +53,11 @@ if mode == 'live':
     text = text[:start] + '''extern int web_scene_init(void);
 extern int web_scene_input(float*);
 extern int web_scene_submit(const float*);
+extern int web_scene_set_tail(int32_t, const char*, const char*, const float*);
 extern void web_scene_render(void);
 static void project_live_frame(void) {
-  if(EM_ASM_INT({return !!window.webContextLost;})) return;
+  if(EM_ASM_INT({return !!window.webContextLost || !!window.webCapturePaused;})) return;
+  if(emscripten_is_webgl_context_lost(emscripten_webgl_get_current_context())) return;
   Scall0(Stop_level_value(Sstring_to_symbol("picture-plane-frame")));
   web_scene_render();
 }
@@ -66,5 +69,6 @@ static void project_start_raylib(void) {
     marker = 'static void project_init(void) {\n'
     text = text.replace(marker, marker + '''  Sforeign_symbol("web_scene_input", (void *)web_scene_input);
   Sforeign_symbol("web_scene_submit", (void *)web_scene_submit);
+  Sforeign_symbol("web_scene_set_tail", (void *)web_scene_set_tail);
 ''')
 source.write_text(text)

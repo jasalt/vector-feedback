@@ -30,7 +30,7 @@ with (native / 'reactive_renderer.cpp').open('a') as out:
 extern "C" int ss_web_update_effect(void* owner, void* handle, const float* values, int32_t count) noexcept {
   ss_try(1,
     auto* effect = require_effect(require_context(owner), handle);
-    if(!values || count != 434) throw std::invalid_argument("invalid web effect payload");
+    if(!values || count < 74 || count > 704) throw std::invalid_argument("invalid web effect payload");
     for(int32_t i = 0; i < count; ++i)
       if(!std::isfinite(values[i])) throw std::invalid_argument("nonfinite web effect value");
     size_t components = 0;

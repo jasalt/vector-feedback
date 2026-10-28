@@ -3,7 +3,7 @@
 <body style="background:#101923;color:#d8e7ef;font-family:monospace">
 <h1>Slipstream WebGL2 — C++ platform witness</h1>
 <p id="status">loading platform witness</p>
-<p>Left drag pan · Right drag yaw/pitch · Middle drag roll · Wheel dolly · Space pause · R reset</p>
+<p>Left drag pan · Right drag yaw/pitch · Middle drag roll · Wheel dolly · Space pause · R reset · +/- tail</p>
 <button type="button" onclick="location.reload()">Reload / recover graphics context</button><br>
 <canvas id="canvas" width="960" height="600" tabindex="0" style="max-width:100%;width:960px;height:auto;touch-action:none" oncontextmenu="event.preventDefault()"></canvas>
 <pre id="log"></pre>
@@ -18,8 +18,16 @@ const canvas = Module.canvas;
 canvas.addEventListener('wheel', event => event.preventDefault(), {passive:false});
 canvas.addEventListener('pointerdown', event => {canvas.focus(); canvas.setPointerCapture(event.pointerId);});
 canvas.addEventListener('mousedown', event => {if(event.button === 1) event.preventDefault();});
-window.addEventListener('blur', () => {window.clearWebInput = true;});
-document.addEventListener('visibilitychange', () => {window.clearWebInput = true;});
+function clearInput() {window.clearWebInput = true; window.webIncreaseTail = false; window.webDecreaseTail = false;}
+window.addEventListener('blur', clearInput);
+for (const [event, down] of [['keydown', true], ['keyup', false]]) {
+  canvas.addEventListener(event, e => {
+    if(e.code === 'Equal' || e.code === 'NumpadAdd') {window.webIncreaseTail = down; e.preventDefault();}
+    if(e.code === 'Minus' || e.code === 'NumpadSubtract') {window.webDecreaseTail = down; e.preventDefault();}
+    if(e.code === 'Space') e.preventDefault();
+  });
+}
+document.addEventListener('visibilitychange', clearInput);
 canvas.addEventListener('webglcontextlost', event => {
   event.preventDefault(); window.webContextLost = true;
   document.getElementById('status').textContent = 'Graphics context lost — reload to recover';
