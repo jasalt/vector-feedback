@@ -12,6 +12,7 @@ import threading
 import time
 
 from playwright.sync_api import sync_playwright
+from build_paths import cache_root
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--scene', choices=['geometry', 'feedback', 'abi', 'live'], default='geometry')
@@ -30,8 +31,8 @@ if args.tail_bounds and not args.exercise:
     parser.error('--tail-bounds requires --exercise')
 if args.deterministic and any((args.exercise, args.frames, args.lifecycle)):
     parser.error('deterministic parity is a separate gate from interactive validation')
-root = Path(__file__).resolve().parent.parent
-output = root / '.cache/wasm' / ('evidence' if args.scene == 'geometry' else args.scene + '-evidence')
+cache = cache_root()
+output = cache / ('evidence' if args.scene == 'geometry' else args.scene + '-evidence')
 if args.deterministic:
     output = output.with_name(output.name.replace('-evidence', '-parity-evidence'))
 elif args.exercise:
@@ -49,7 +50,7 @@ class IsolatedHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Cross-Origin-Embedder-Policy', 'require-corp')
         super().end_headers()
 
-build = root / '.cache/wasm' / (f'chez-{args.scene}/em-tpb32l/bin/tpb32l' if args.scene in ('abi', 'live') else 'build')
+build = cache / (f'chez-{args.scene}/em-tpb32l/bin/tpb32l' if args.scene in ('abi', 'live') else 'build')
 handler = functools.partial(IsolatedHandler, directory=str(build))
 server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
 threading.Thread(target=server.serve_forever, daemon=True).start()

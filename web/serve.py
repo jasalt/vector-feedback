@@ -4,11 +4,12 @@ import argparse
 import functools
 import http.server
 from pathlib import Path
+from build_paths import cache_root
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--port', type=int, default=8000)
 parser.add_argument('--directory', type=Path,
-                    default=Path('.cache/wasm/chez-live/em-tpb32l/bin/tpb32l'))
+                    default=cache_root() / 'chez-live/em-tpb32l/bin/tpb32l')
 args = parser.parse_args()
 if not (args.directory / 'scheme.html').is_file():
     parser.error('Build the live target first, or set --directory to its runtime directory')

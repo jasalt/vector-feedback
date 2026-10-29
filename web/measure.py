@@ -5,11 +5,12 @@ import gzip
 import hashlib
 import json
 from pathlib import Path
+from build_paths import cache_root
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--directory', type=Path,
-    default=Path('.cache/wasm/chez-live/em-tpb32l/bin/tpb32l'))
-parser.add_argument('--output', type=Path, default=Path('.cache/wasm/bundle-size.json'))
+    default=cache_root() / 'chez-live/em-tpb32l/bin/tpb32l')
+parser.add_argument('--output', type=Path, default=cache_root() / 'bundle-size.json')
 args = parser.parse_args()
 files = {}
 for name in ('scheme.html', 'scheme.js', 'scheme.wasm', 'scheme.data'):

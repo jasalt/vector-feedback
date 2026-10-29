@@ -4,7 +4,7 @@ cd "$(dirname "$0")/.."
 for tool in emcmake emcc cmake python3 git "${JOLT:-jolt}"; do
   command -v "$tool" >/dev/null || { echo "Missing $tool: enter an Emscripten shell (see web/README.md)." >&2; exit 1; }
 done
-build="$PWD/.cache/wasm"
+source scripts/wasm-common.sh
 mkdir -p "$build/sources"
 fetch() {
   local name="$1" url="$2" revision="$3"

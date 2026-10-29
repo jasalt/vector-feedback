@@ -239,15 +239,28 @@ and next action. Partial witnesses must not be labeled a working Jolt port.
 ## Self-contained build follow-up (in progress)
 
 - [x] S0 — Own pinned Nix shell/lock, libffi checksum and reviewed Chez patch.
-- [ ] S1 — Bootstrap matching native host, cross boots/xpatch, 32-bit target pack
+- [x] S1 — Bootstrap matching native host, cross boots/xpatch, 32-bit target pack
   and Emscripten libffi from upstream sources in a new empty local cache.
-- [ ] S2 — Generate pristine Chez app glue; remove all sibling build inputs.
+- [x] S2 — Generate pristine Chez app glue; remove all sibling build inputs.
 - [ ] S3 — Build/run ABI, live model and parity gates from the fresh cache;
   document changed ABI observations, toolchain constraints and exact commands.
 
 `web/toolchain/` now owns the source boundary. The desktop dependency version
 and entry points remain unchanged. Source pins intentionally stay at the proven
 experimental Jolt 0.8.21 for this containment change; upgrading is separate work.
+
+S1 observed: `WASM_BUILD_ROOT=$PWD/.cache/wasm-selfcontained nix develop -c
+bash scripts/wasm-bootstrap.sh` exited 0 starting with an empty cache. Native
+host, patched cross xpatch/boots, real 32-bit kernel/pack and SHA-verified libffi
+were built from the repo's locked upstream inputs. Logs are under that cache's
+`toolchain/logs/`; no prepared sibling files were used. The shell also supplies
+a pinned DejaVu Sans Mono font and its source license (the font package alone
+omits its license, so the flake references the pinned font source).
+
+S2 implemented: owned `web/chez_host.c.inc` is injected into pristine Chez main.c,
+not extracted from an existing Raylib app. App build/fixture/server/automation
+share `WASM_BUILD_ROOT`. Bootstrap fingerprints prevent mixing stale hosts and
+packs; old app trees without the fingerprint are rejected with cleanup guidance.
 
 ## Final status / follow-ups (not advertised as completed)
 

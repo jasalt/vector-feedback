@@ -9,11 +9,12 @@ import argparse
 import json
 from pathlib import Path
 from PIL import Image, ImageChops, ImageStat
+from build_paths import cache_root
 
 parser = argparse.ArgumentParser()
 parser.add_argument('desktop', type=Path)
 parser.add_argument('browser', type=Path)
-parser.add_argument('--output', type=Path, default=Path('.cache/wasm/capture-parity.json'))
+parser.add_argument('--output', type=Path, default=cache_root() / 'capture-parity.json')
 args = parser.parse_args()
 native = Image.open(args.desktop).convert('RGB').resize((960, 600), Image.Resampling.LANCZOS)
 web = Image.open(args.browser).convert('RGB')
