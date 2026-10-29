@@ -21,7 +21,7 @@ revision/tool records are in `build-environment.json`; runtime hashes are in
 - Adwaita Mono: see `runtime/font-LICENSE.txt`; the exact font hash is in
   `runtime/font-info.json`.
 - libffi, Emscripten, LLVM C++/compiler runtime, musl, GLFW API support, lz4,
-  zlib and NanoSVG: notices/license texts are preserved under `licenses/`.
+  and zlib: notices/license texts are preserved under `licenses/`.
 
 ## Redistribution clarification still needed
 
