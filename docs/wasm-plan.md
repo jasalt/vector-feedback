@@ -242,7 +242,7 @@ and next action. Partial witnesses must not be labeled a working Jolt port.
 - [x] S1 — Bootstrap matching native host, cross boots/xpatch, 32-bit target pack
   and Emscripten libffi from upstream sources in a new empty local cache.
 - [x] S2 — Generate pristine Chez app glue; remove all sibling build inputs.
-- [ ] S3 — Build/run ABI, live model and parity gates from the fresh cache;
+- [x] S3 — Build/run ABI, live model and parity gates from the fresh cache;
   document changed ABI observations, toolchain constraints and exact commands.
 
 `web/toolchain/` now owns the source boundary. The desktop dependency version
@@ -261,6 +261,19 @@ S2 implemented: owned `web/chez_host.c.inc` is injected into pristine Chez main.
 not extracted from an existing Raylib app. App build/fixture/server/automation
 share `WASM_BUILD_ROOT`. Bootstrap fingerprints prevent mixing stale hosts and
 packs; old app trees without the fingerprint are rejected with cleanup guidance.
+
+S3 observed in that same fresh cache: ABI browser gate passes and now explicitly
+asserts both direct mixed calls. `RAW-PATH-RESULT 0`, observed scale `1`, and
+`RAW-FLOAT-RESULT 0` replace the old failures. With a consistent patched host /
+xpatch / target, those old failures are no longer reproduced; the historical
+reports remain unchanged. The bulk pointer adapter remains useful for uploads.
+The new live build passes deterministic 65-frame/434-component parity (zero
+float32 error), and pause/drags/wheel/tail variants 8–78/reset/blur/resize all pass
+in Chromium. The new DejaVu-backed screenshot was inspected: readable vector
+text and the expected colored projective feedback trails. Four stdlib-only
+build-tool tests pass. Commands use this repo's `nix develop` / `.#i686-cc` only.
+Documentation/evidence updates are being finalized; the older Pages branch is
+an independent static snapshot and is not silently overwritten by this change.
 
 ## Final status / follow-ups (not advertised as completed)
 

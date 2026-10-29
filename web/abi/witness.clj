@@ -1,5 +1,5 @@
 (ns witness
-  "Reduced real Slipstream ABI gate, independent of GL and Glimmer."
+  "Real Slipstream direct/memory-adapter ABI gate, independent of GL/Glimmer."
   (:require [jolt.ffi :as ffi]))
 
 (ffi/defcfn atlas-new "ss_atlas_new" [:uint32 :int32] :pointer)
@@ -48,11 +48,16 @@
       (doseq [[i value] (map-indexed vector [-1.18 -0.68 2.36 1.36])]
         (ffi/write rect :float value (* i 4)))
       (ffi/write key key-layout {:type 0 :codepoint 120 :name ffi/null})
-      (println "UINT64-OBSERVED" (u64-low 4) (u64-high 4)
-               "RAW-PATH-RESULT" (raw-path-command path 14 rect 4))
+      (let [low (u64-low 4) high (u64-high 4)
+            result (raw-path-command path 14 rect 4)]
+        (println "UINT64-OBSERVED" low high "RAW-PATH-RESULT" result)
+        (check (and (= 4 low) (zero? high)) "uint64 probe")
+        (check (zero? result) "direct mixed pointer/uint64 path call"))
       (check (zero? (path-command path 14 rect 4)) "pointer/uint32 path adapter")
       (println "FLOAT-MEMORY-OBSERVED" (read-float rect))
-      (println "RAW-FLOAT-RESULT" (define-shape canvas path key 1.0 0 0.0 0.0))
+      (let [result (define-shape canvas path key 1.0 0 0.0 0.0)]
+        (println "RAW-FLOAT-RESULT" result)
+        (check (zero? result) "direct mixed pointer/float shape call"))
       (ffi/write floats :float 1.0)
       (check (zero? (define-shape-p canvas path key floats)) "float memory adapter + key struct")
       (check (zero? (atlas-build atlas)) "atlas build")
