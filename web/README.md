@@ -1,75 +1,111 @@
-# Opt-in Slipstream WebGL2 platform witness
+# Optional Jolt + Slipstream WebGL2 target
 
-This target builds the pinned Slipstream C++ renderer and its Slughorn/MSDFgen/
-FreeType dependencies. It is **not yet a Jolt browser application**. Desktop
-setup and `jolt -M:run` are unchanged. Progress: [../docs/wasm-plan.md](../docs/wasm-plan.md).
+**Working experimental browser target. Desktop remains primary:** normal
+`scripts/setup.sh` and `jolt -M:run` are unchanged. The browser runs the shared
+Jolt model and effect shader inside threaded Chez Wasm, with actual Slipstream/
+Slughorn vector graphics and FreeType text. No Raylib renderer is used.
 
-With Emscripten, CMake, Git, Python and a TTF font available:
+Progress and evidence: [../docs/wasm-plan.md](../docs/wasm-plan.md).
+
+## Build and run in this workspace
+
+Requires the sibling `../jolt-wasm-raylib` locked development environment and
+its **prepared** EXP-018 native Chez host/target pack, EXP-014 Emscripten libffi,
+EXP-017 Chez tree and pinned Jolt archive. Follow that project's EXP-018 prepare
+instructions first. These prerequisites are substantial: this integration is
+**not yet a clean-room bootstrap or a supported upstream Jolt Wasm release**.
+`WASM_REFERENCE` overrides the sibling path; scripts only read it.
 
 ```sh
-bash scripts/wasm-build.sh
-python3 -m http.server 8000 --bind 127.0.0.1 --directory .cache/wasm/build
-# Visit http://127.0.0.1:8000/witness.html
-```
-
-In this workspace the existing locked sibling shell can supply the tools:
-
-```sh
+# C++ platform witness, dependencies and shared shader fixture:
 nix develop ../jolt-wasm-raylib -c bash scripts/wasm-build.sh
-```
-
-The build also requires native Jolt (`JOLT` override). It emits the current
-application effect and a deterministic 65-tick/48-history fixture without loading
-the desktop native dependency. `?scene=feedback` renders that fixture through
-Slipstream's mat3 effect interface; it is not yet live Jolt execution in Wasm.
-
-Set `WEB_FONT` if Adwaita Mono is not installed. The font is preloaded at build
-time, not resolved from browser host paths. Before publishing, supply and ship
-its license. This witness requires WebGL2 and EXT_color_buffer_float for
-Slipstream's compositor; capability failure is explicit. Chez's later pthread
-integration will additionally need cross-origin isolation.
-
-`prepare.py` applies fail-fast platform adaptations to a disposable pinned
-source copy under `.cache/wasm/`. The original desktop source is never patched.
-Browser gate (host `uv`, with Chromium on PATH or `CHROMIUM` set):
-
-```sh
-uv run --with playwright web/browser_smoke.py
-uv run --with playwright web/browser_smoke.py --scene feedback
-```
-
-Diagnostics and screenshots go to `.cache/wasm/evidence/`. The gate checks
-readiness and browser errors; screenshots must also be inspected for semantic
-content. A ready canvas alone does not prove correct geometry or text.
-
-## Experimental Jolt ABI gate
-
-Requires the sibling's prepared EXP-018 native host/target pack, EXP-014 libffi,
-EXP-017 Chez tree and pinned Jolt archive (see that project's EXP-018 commands).
-This is currently an integration experiment, **not a clean-room bootstrap**.
-`WASM_REFERENCE` overrides the sibling path. It is read-only; all changes/builds
-are in this project's `.cache/wasm/`.
-
-```sh
-nix develop ../jolt-wasm-raylib -c bash scripts/wasm-abi-build.sh
-uv run --with playwright web/browser_smoke.py --scene abi
-```
-
-## Live Jolt-owned feedback prototype
-
-```sh
+# Live Jolt model + Slipstream:
 nix develop ../jolt-wasm-raylib -c env WASM_MODE=live bash scripts/wasm-abi-build.sh
-uv run --with playwright web/browser_smoke.py --scene live
+python3 web/serve.py
+# Open http://127.0.0.1:8000/scheme.html
 ```
 
-Serve `.cache/wasm/chez-live/em-tpb32l/bin/tpb32l/` with COOP/COEP headers and
-open `scheme.html`. This runs shared `feedback.model` and `visuals/effect` inside
-Chez Wasm each frame, with actual Slipstream C++ graphics and a preloaded font.
-The browser prototype has a fixed 48-frame tail and a simplified HUD, not a
-complete Glimmer browser backend. See the plan for validation and limitations.
+The first script needs Emscripten, CMake, Git, Python, native Jolt and a font.
+It pins Slipstream/Slughorn/MSDFgen and applies fail-fast web adaptations to a
+**disposable source copy** under `.cache/wasm/`. It never patches desktop source
+or dependency caches. `JOLT` overrides native fixture emission only; cross-builds
+use the sibling's explicitly revision-matched Jolt/host/target pack.
 
-The test records direct mixed uint64/float ABI failures and validates small
-pointer-based adapters. It does not claim unchanged desktop FFI compatibility.
+Set `WEB_FONT` and `WEB_FONT_LICENSE` for a different redistributable TTF.
+Default: installed Adwaita Mono and its system license. The font is preloaded
+inside `.data`; the license and a font hash are copied beside browser artifacts.
+Before publishing, include licenses/notices for all bundled dependencies too.
 
-The legacy blocking GLFW example runner is deliberately not linked; the actual
-reactive renderer is driven through its existing C ABI by browser frames.
+Controls: left drag pan; right drag yaw/pitch; middle drag roll; wheel dolly;
+Space pause; R reset; +/- adjust tail (8–78). Canvas focus and a three-button
+mouse are recommended. Context loss stops submissions; use the reload button
+to rebuild resources. In-place restoration is **not** implemented.
+
+## Tests
+
+Host `uv` plus Chromium are needed. Avoid running host Playwright inside the
+Nix shell if its Python extensions cannot find host `libstdc++`.
+
+```sh
+export CHROMIUM="$(nix develop ../jolt-wasm-raylib -c bash -c 'command -v chromium')"
+uv run --with-requirements web/requirements.txt web/browser_smoke.py --scene live
+uv run --with-requirements web/requirements.txt web/browser_smoke.py --scene live --deterministic
+uv run --with-requirements web/requirements.txt web/browser_smoke.py --scene live --exercise --tail-bounds
+uv run --with-requirements web/requirements.txt web/browser_smoke.py --scene live --exercise --dpr 2
+uv run --with-requirements web/requirements.txt web/browser_smoke.py --scene live --lifecycle
+uv run --with-requirements web/requirements.txt web/browser_smoke.py --scene live --frames 600
+```
+
+The last gate uses a narrower viewport to bound SwiftShader fragment workload.
+Full-resolution software rendering is slow and can exceed several-minute test
+budgets. Screenshots pause submissions before capture; readiness/error checks
+alone are not visual correctness proof. Diagnostics, screenshots and hashes go
+to `.cache/wasm/*evidence*/`. Inspect screenshots as well as JSON results.
+
+Native desktop regression and tolerant feedback-region image comparison:
+
+```sh
+jolt -M:test
+xvfb-run -a jolt -M:run --frames 65 --capture .cache/wasm/desktop.ppm
+uv run --with-requirements web/requirements.txt web/compare_capture.py \
+  .cache/wasm/desktop.ppm .cache/wasm/live-parity-evidence/canvas.png
+python3 web/measure.py
+```
+
+`--deterministic` runs 65 exact ticks and compares all 434 float32 uniforms to
+native Jolt emission. Image comparison excludes the different HUD, downsamples
+the desktop capture and permits at most one vertical pixel of registration.
+It is not byte-identical pixel parity.
+
+## Isolated witnesses
+
+```sh
+# Reduced direct ABI failures + successful pointer adapters:
+nix develop ../jolt-wasm-raylib -c bash scripts/wasm-abi-build.sh
+uv run --with-requirements web/requirements.txt web/browser_smoke.py --scene abi
+# C++ only geometry/font and a native-Jolt-authored static feedback fixture:
+uv run --with-requirements web/requirements.txt web/browser_smoke.py --scene geometry
+uv run --with-requirements web/requirements.txt web/browser_smoke.py --scene feedback
+```
+
+## Architecture and limitations
+
+- Browser callbacks own Chez/Jolt and GL on the same owner thread. C retains no
+  Scheme objects. A bounded foreign float buffer carries matrices and metadata.
+- The pinned target mis-marshals the tested mixed uint64 and float direct calls.
+  Small count/float-memory adapters avoid that ABI boundary. Unchanged desktop
+  Slipstream FFI/Glimmer bindings are **not** advertised as browser compatible.
+- `visuals/effect` and `feedback.model` are shared unchanged. C++ adapts the one
+  quad and font scene; the HUD is HTML. This is not a general Glimmer web backend.
+- A web-only mutable uniform extension reuses effects; tail variants are cached
+  by tail length. Large tails depend on available fragment-uniform capacity.
+- Requires WebGL2 + `EXT_color_buffer_float`, workers, SharedArrayBuffer and
+  cross-origin isolation. `serve.py` binds loopback and sends COOP/COEP. Deployment
+  needs HTTPS (or localhost), suitable headers for HTML/workers/assets, and all
+  generated `.html`, `.js`, `.wasm`, `.data` files. Plain GitHub Pages without an
+  isolation mechanism is insufficient; none is installed automatically here.
+- Pinned experimental runtime is Jolt 0.8.21 / Chez `tpb32l`, not a claim that
+  current desktop Jolt releases have supported browser builds. Generated Wasm is
+  the Chez bytecode interpreter and native renderer, not direct Wasm compilation
+  of Jolt functions. Hardware/browser portability and production performance
+  remain open; see the measured limitations in the plan.

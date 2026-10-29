@@ -1,4 +1,11 @@
-# Optional Wasm target: feasibility research
+# Optional Wasm target: initial feasibility research
+
+> Superseded by execution: the actual Slipstream renderer now runs in an optional
+> Jolt/Chez Wasm prototype, including controls, tail variants and parity gates.
+> See [wasm-plan.md](wasm-plan.md) and [../web/README.md](../web/README.md).
+> The assessment below preserves the initial, pre-build research; its proposed
+> separate-renderer preference was not adopted. WebGL platform glue proved
+> tractable; the measured ABI issues were handled by small pointer adapters.
 
 ## Verdict
 

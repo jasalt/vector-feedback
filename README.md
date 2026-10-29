@@ -39,6 +39,14 @@ jolt -M:run --font /absolute/path/to/font.ttf
 
 Or set `SLIPSTREAM_TEST_FONT`.
 
+## Experimental browser target
+
+Desktop remains the primary renderer. An optional **Jolt + Slipstream WebGL2/Wasm**
+prototype shares the model and feedback shader. See [web/README.md](web/README.md)
+for build/serve commands and [docs/wasm-plan.md](docs/wasm-plan.md) for progress,
+validation and limitations. It currently depends on the prepared sibling Chez/Wasm
+experiment toolchain; it is not a general Slipstream/Glimmer browser release.
+
 ## Controls
 
 | Input | Camera adjustment |

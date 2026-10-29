@@ -58,8 +58,13 @@ extern void web_scene_render(void);
 static void project_live_frame(void) {
   if(EM_ASM_INT({return !!window.webContextLost || !!window.webCapturePaused;})) return;
   if(emscripten_is_webgl_context_lost(emscripten_webgl_get_current_context())) return;
+  double begin = emscripten_get_now();
   Scall0(Stop_level_value(Sstring_to_symbol("picture-plane-frame")));
+  double submitted = emscripten_get_now();
   web_scene_render();
+  double rendered = emscripten_get_now();
+  EM_ASM({window.frameMetrics = ({modelAndFFIMs:$0, renderAndDriverMs:$1, wasmCapacityBytes:HEAPU8.length});},
+         submitted-begin, rendered-submitted);
 }
 static void project_start_raylib(void) {
   if(web_scene_init() != 0) abort();

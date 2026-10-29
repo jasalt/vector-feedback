@@ -1,0 +1,19 @@
+{
+  "scene": "abi",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "requestFailures": [],
+  "messages": [
+    "UINT64-OBSERVED 4 0 RAW-PATH-RESULT -1",
+    "FLOAT-MEMORY-OBSERVED -1180",
+    "DEFINE-SHAPE-OBSERVED scale=0 origin=0 x=0 y=0",
+    "RAW-FLOAT-RESULT -1",
+    "SLIPSTREAM-WASM-ABI-PASS"
+  ],
+  "isolated": true,
+  "ready": true,
+  "status": "READY: Slipstream ABI host returned",
+  "browser": "152.0.7977.64",
+  "page.png_sha256": "8c3cb39aaea67d4e5147d399abab1dfc5c4dfd96078582e19d596b65ffaeab1a",
+  "canvas.png_sha256": "32875711d29a9dad738b09a1e9a6e52fbc7a0dbaa03e1e192cb0a75335fb68ad"
+}

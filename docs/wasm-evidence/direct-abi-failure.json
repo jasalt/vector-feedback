@@ -1,0 +1,20 @@
+{
+  "scene": "abi",
+  "pageErrors": [],
+  "consoleErrors": [
+    "Unhandled exception: ABI failure: float arguments + key struct / cannot define an empty or degenerate path",
+    "  ex-data: {}",
+    "  trace:",
+    "    jolt.ffi/encode-desc (stdlib/jolt/ffi.clj:1015)"
+  ],
+  "requestFailures": [],
+  "messages": [
+    "UINT64-OBSERVED 4 0 RAW-PATH-RESULT -1",
+    "FLOAT-MEMORY-OBSERVED -1180",
+    "DEFINE-SHAPE-OBSERVED scale=0 origin=0 x=0 y=0"
+  ],
+  "status": "loading (not a Jolt runtime)",
+  "browser": "152.0.7977.64",
+  "page.png_sha256": "f5b37096bc6b6b8779af728ab6feca252cdead4f7ff0229b6bc5e1dae652eb4b",
+  "canvas.png_sha256": "32875711d29a9dad738b09a1e9a6e52fbc7a0dbaa03e1e192cb0a75335fb68ad"
+}

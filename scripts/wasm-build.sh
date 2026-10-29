@@ -32,4 +32,5 @@ emcmake cmake -S web -B "$build/build" -DCMAKE_BUILD_TYPE=Release \
   -DSLIPSTREAM_SOURCE="$build/slipstream-web" \
   -DSLUGHORN_SOURCE="$build/sources/slughorn" -DWEB_FONT="$font"
 cmake --build "$build/build" --parallel "${JOBS:-4}"
+python3 web/font_assets.py "$build/build"
 printf 'Built C++ Slipstream witness (not Jolt): %s/witness.html\n' "$build/build"

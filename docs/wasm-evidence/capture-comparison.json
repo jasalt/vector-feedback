@@ -1,0 +1,51 @@
+{
+  "region": [
+    0,
+    120,
+    960,
+    480
+  ],
+  "resampling": "desktop LANCZOS to 960x600",
+  "hudCompared": false,
+  "registrationLimitPixels": 1,
+  "thresholdNormalizedMAE": 0.02,
+  "best": {
+    "verticalShift": 0,
+    "meanAbsoluteRGB": [
+      3.027951388888889,
+      2.0430729166666666,
+      3.8990046296296295
+    ],
+    "normalizedMAE": 0.011725528019849916
+  },
+  "candidates": [
+    {
+      "verticalShift": -1,
+      "meanAbsoluteRGB": [
+        8.97849826388889,
+        6.033313078703704,
+        11.903373842592593
+      ],
+      "normalizedMAE": 0.035183248608085214
+    },
+    {
+      "verticalShift": 0,
+      "meanAbsoluteRGB": [
+        3.027951388888889,
+        2.0430729166666666,
+        3.8990046296296295
+      ],
+      "normalizedMAE": 0.011725528019849916
+    },
+    {
+      "verticalShift": 1,
+      "meanAbsoluteRGB": [
+        8.988747106481481,
+        5.9994502314814815,
+        11.880387731481482
+      ],
+      "normalizedMAE": 0.035122333424110384
+    }
+  ],
+  "pass": true
+}

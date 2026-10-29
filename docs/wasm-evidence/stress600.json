@@ -1,0 +1,56 @@
+{
+  "scene": "live",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "requestFailures": [],
+  "messages": [
+    "SLIPSTREAM-JOLT-LIVE-BOOT",
+    "GL: OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium))",
+    "stress progress: {\"model\":{\"frames\":55,\"paused\":false,\"time\":5.333333492279053,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}",
+    "stress progress: {\"model\":{\"frames\":103,\"paused\":false,\"time\":10.133333206176758,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}",
+    "stress progress: {\"model\":{\"frames\":150,\"paused\":false,\"time\":14.833333015441895,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}",
+    "stress progress: {\"model\":{\"frames\":197,\"paused\":false,\"time\":19.53333282470703,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}",
+    "stress progress: {\"model\":{\"frames\":245,\"paused\":false,\"time\":24.33333396911621,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}",
+    "stress progress: {\"model\":{\"frames\":293,\"paused\":false,\"time\":29.133333206176758,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}",
+    "stress progress: {\"model\":{\"frames\":340,\"paused\":false,\"time\":33.83333206176758,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}",
+    "stress progress: {\"model\":{\"frames\":388,\"paused\":false,\"time\":38.63333511352539,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}",
+    "stress progress: {\"model\":{\"frames\":438,\"paused\":false,\"time\":43.63333511352539,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}",
+    "stress progress: {\"model\":{\"frames\":485,\"paused\":false,\"time\":48.33333206176758,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}",
+    "stress progress: {\"model\":{\"frames\":534,\"paused\":false,\"time\":53.233333587646484,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}",
+    "stress progress: {\"model\":{\"frames\":582,\"paused\":false,\"time\":58.03333282470703,\"zoom\":0.9649999737739563,\"panX\":0.00800000037997961,\"panY\":0,\"yaw\":0.012000000104308128,\"pitch\":-0.00800000037997961,\"roll\":0.02500000037252903,\"tail\":48},\"lost\":false}"
+  ],
+  "isolated": true,
+  "modelState": {
+    "frames": 603,
+    "paused": false,
+    "time": 60.13333511352539,
+    "zoom": 0.9649999737739563,
+    "panX": 0.00800000037997961,
+    "panY": 0,
+    "yaw": 0.012000000104308128,
+    "pitch": -0.00800000037997961,
+    "roll": 0.02500000037252903,
+    "tail": 48
+  },
+  "stressFrames": 602,
+  "ready": true,
+  "status": "Jolt + Slipstream WebGL2 / LIVE / frame 608 / time 60.63 / zoom 0.965 / tail 48",
+  "canvasDimensions": {
+    "width": 484,
+    "height": 303,
+    "css": "max-width: 100%; touch-action: none; width: 960px; height: auto;",
+    "box": {
+      "x": 8,
+      "y": 213.8125,
+      "width": 484,
+      "height": 303,
+      "top": 213.8125,
+      "right": 492,
+      "bottom": 516.8125,
+      "left": 8
+    }
+  },
+  "browser": "152.0.7977.64",
+  "page.png_sha256": "ad89b74462b57c2af9132ca68ef6c8abf8924e6737565fb40977aba1a30ac5ec",
+  "canvas.png_sha256": "2c897953ee05ec20d83eb4fc82982fe2002bb74722a33dd900fe4e857db58929"
+}

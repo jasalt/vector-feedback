@@ -29,7 +29,7 @@ platform patches to build-local copies of pinned sources.
 - [x] P5 — Input/lifecycle and parity: deterministic 65-frame capture, numerical
   model parity, all controls, 600 frames, resize/DPR/blur/background behavior,
   error and context-loss handling; desktop regression tests and capture.
-- [ ] P6 — Document reproducible build/serve commands, deployment isolation,
+- [x] P6 — Document reproducible build/serve commands, deployment isolation,
   measured size/startup/frame-time/memory limitations; final status and handoff.
 
 Stages may stop at an observed blocker, recorded with the exact failed command
@@ -208,3 +208,47 @@ and next action. Partial witnesses must not be labeled a working Jolt port.
   about 48 frames/10 seconds. This is a **slow software-rendered prototype**,
   not a 60 fps claim. `.cache/wasm/live-stress-evidence/` retains the passing
   600-frame report; tail/DPR/lifecycle reports are in separately named folders.
+
+### P6 — build/serve, measurements and handoff (PASS experimental scope)
+
+- [../web/README.md](../web/README.md) contains build, isolated serving,
+  automation, ABI probes, capture comparison and measurement commands. Desktop
+  remains the documented default. `web/serve.py` is loopback-only and sends
+  COOP/COEP; runtime and copied font license serving were verified over HTTP.
+- Font data is preloaded; its hash and license are copied beside artifacts.
+  Python test dependencies are pinned in `web/requirements.txt`. Generated
+  binaries, boots, profiles and caches stay ignored. Bash syntax, Python compile
+  checks and `git diff --check` pass.
+- Final runtime: HTML 2,509 B; JS 408,685 B; Wasm 2,283,465 B; data 17,261,795 B.
+  Total 19,956,454 B; per-file gzip-9 total 10,232,275 B (not measured transfer).
+  Boot/font are already inside data. Assertions, pthreads and C++ exceptions
+  remain enabled; this is not a minimal-size release build.
+- One final 960×600 SwiftShader run: navigation-to-ready 4,716.5 ms (includes
+  first three frames). Sample model/FFI/instrumentation 137.8 ms, render/driver
+  736.8 ms. These are **single samples**, not medians or isolated GPU timings.
+  Wasm linear-memory capacity 104,529,920 B; live allocation count/peak RSS and
+  long-run leak behavior are not measured. No hardware-GPU/60 fps claim.
+- Small reports, source/tool pins, original reduced failures, hashes and a
+  vision-inspected feedback screenshot retained in
+  [wasm-evidence/](wasm-evidence/README.md). Earlier passing gates predate final
+  observability/packaging changes; final instrumented smoke also passes cleanly.
+- All planned prototype stages are executed. The original `deps.edn`, desktop
+  source and native setup are unchanged. No sibling repository/cache was edited
+  and no upstream patch or push was made. Work is split into atomic commits.
+
+## Final status / follow-ups (not advertised as completed)
+
+**Working optional Jolt + actual Slipstream Wasm prototype**, with shared model
+and shader, browser controls and parity evidence. It is not a general Slipstream
+or Glimmer browser release. Follow-ups before production/upstreaming:
+
+- Replace prepared sibling build-tree prerequisites with a clean pinned bootstrap.
+- Upgrade/validate the cross toolchain against the desktop's supported Jolt
+  version; reduce/report the mixed float/uint64 ABI failures upstream.
+- Generalize the platform/FFI boundary if full Glimmer scene reuse is required.
+- Profile model allocation/bytecode execution, FFI writes and driver waits;
+  remove test instrumentation from a future performance build and test hardware
+  GPUs, uniform limits, other browsers and mobile input.
+- Measure startup distributions, peak/live memory and longer GC/leak stress.
+- Implement in-place context restoration if needed; current recovery reloads.
+- Ship all dependency notices and validate isolation on the intended public host.

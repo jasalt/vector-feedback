@@ -3,3 +3,4 @@
 native/*.so
 native/*.dylib
 *.ppm
+__pycache__/

@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import shutil
 import threading
+import time
 
 from playwright.sync_api import sync_playwright
 
@@ -21,6 +22,14 @@ parser.add_argument('--dpr', type=float, default=1)
 parser.add_argument('--lifecycle', action='store_true')
 parser.add_argument('--tail-bounds', action='store_true')
 args = parser.parse_args()
+if args.frames < 0 or args.dpr <= 0:
+    parser.error('frames must be nonnegative and DPR must be positive')
+if args.scene != 'live' and any((args.deterministic, args.exercise, args.frames, args.lifecycle, args.tail_bounds)):
+    parser.error('extended validation flags require --scene live')
+if args.tail_bounds and not args.exercise:
+    parser.error('--tail-bounds requires --exercise')
+if args.deterministic and any((args.exercise, args.frames, args.lifecycle)):
+    parser.error('deterministic parity is a separate gate from interactive validation')
 root = Path(__file__).resolve().parent.parent
 output = root / '.cache/wasm' / ('evidence' if args.scene == 'geometry' else args.scene + '-evidence')
 if args.deterministic:
@@ -62,12 +71,14 @@ try:
         try:
             entry = 'scheme.html' if args.scene in ('abi', 'live') else 'witness.html'
             query = f'scene={args.scene}' + ('&deterministic=1' if args.deterministic else '')
+            navigation_start = time.monotonic()
             page.goto(f"http://127.0.0.1:{server.server_port}/{entry}?{query}")
             condition = "window.witnessReady === true"
             if args.scene == 'abi':
                 condition += " && document.querySelector('#log').textContent.includes('SLIPSTREAM-WASM-ABI-PASS')"
             page.wait_for_function('(' + condition + ") || document.querySelector('#log').textContent.includes('Unhandled exception')", timeout=45000)
             assert page.evaluate(condition), page.locator('#log').inner_text()
+            report['navigationToReadyMs'] = (time.monotonic()-navigation_start)*1000
             report['isolated'] = page.evaluate('crossOriginIsolated')
             if args.scene == 'live':
                 report['modelState'] = page.evaluate('window.modelState')
@@ -185,6 +196,8 @@ try:
             if args.scene == 'live':
                 page.evaluate('window.webCapturePaused = true')
             report["status"] = page.locator("#status").inner_text()
+            if args.scene == 'live':
+                report['lastFrameMetrics'] = page.evaluate('window.frameMetrics')
             report['canvasDimensions'] = page.locator('canvas').evaluate('(c)=>({width:c.width,height:c.height,css:c.style.cssText,box:c.getBoundingClientRect().toJSON()})')
             page.screenshot(path=str(output / "page.png"), full_page=True, timeout=15000)
             box = page.locator('canvas').bounding_box()

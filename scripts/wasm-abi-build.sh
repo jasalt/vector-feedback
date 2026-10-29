@@ -53,4 +53,5 @@ fi
     --emboot="$build/$mode-app.build/jolt.boot" --disable-x11 --disable-curses
   make -j"${JOBS:-4}"
 )
+python3 web/font_assets.py "$work/em-tpb32l/bin/tpb32l"
 printf 'Built Slipstream/Jolt %s witness: %s/em-tpb32l/bin/tpb32l/scheme.html\n' "$mode" "$work"
