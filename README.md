@@ -7,6 +7,10 @@ Pan, dolly, roll, yaw, and pitch produce spirals, tunnels, and keystone distorti
 
 https://github.com/user-attachments/assets/95a155ef-22c5-4353-a9a2-a4f93ed8ab40
 
+WASM demo for desktop web browser: https://github.com/jasalt/vector-feedback
+
+See also similar Slughorn + Zig based application which is (unsurprisingly) more performant: https://github.com/jasalt/slughorn-test
+
 ## Quick start on Fedora Linux (Nix)
 
 With `native/libslipstream.so` already built (see below, or use the library built in the shared VM workspace), run from this project directory:
