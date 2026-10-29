@@ -1,0 +1,67 @@
+{
+  "nodes": {
+    "chezScheme": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1787068496,
+        "narHash": "sha256-lDF3BREXRQSkVnbntUkt8NYhvIpTuuGyUtMuwBDZchk=",
+        "ref": "refs/heads/main",
+        "rev": "7fadeee45fcc0135b17f5c1a926157004f898339",
+        "revCount": 2532,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/cisco/ChezScheme.git"
+      },
+      "original": {
+        "rev": "7fadeee45fcc0135b17f5c1a926157004f898339",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/cisco/ChezScheme.git"
+      }
+    },
+    "jolt": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791695337,
+        "narHash": "sha256-ISdO+aNF/V/YI1xx3Kcj9OLbiCM2IfRpkpbXNQN+F+M=",
+        "ref": "refs/heads/main",
+        "rev": "5b46858a171f30949f5b09eb484bc6c5ff93c6ea",
+        "revCount": 4175,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/jolt-lang/jolt.git"
+      },
+      "original": {
+        "rev": "5b46858a171f30949f5b09eb484bc6c5ff93c6ea",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/jolt-lang/jolt.git"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1788039129,
+        "narHash": "sha256-pa4Q0qErvCvzCaaUph7Sm37RhR4xvPrYI8Lgz6k85+A=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "d2f67949798825fe853f7c5d0492b8bf016d3f88",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "chezScheme": "chezScheme",
+        "jolt": "jolt",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

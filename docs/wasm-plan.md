@@ -236,6 +236,19 @@ and next action. Partial witnesses must not be labeled a working Jolt port.
   source and native setup are unchanged. No sibling repository/cache was edited
   and no upstream patch or push was made. Work is split into atomic commits.
 
+## Self-contained build follow-up (in progress)
+
+- [x] S0 — Own pinned Nix shell/lock, libffi checksum and reviewed Chez patch.
+- [ ] S1 — Bootstrap matching native host, cross boots/xpatch, 32-bit target pack
+  and Emscripten libffi from upstream sources in a new empty local cache.
+- [ ] S2 — Generate pristine Chez app glue; remove all sibling build inputs.
+- [ ] S3 — Build/run ABI, live model and parity gates from the fresh cache;
+  document changed ABI observations, toolchain constraints and exact commands.
+
+`web/toolchain/` now owns the source boundary. The desktop dependency version
+and entry points remain unchanged. Source pins intentionally stay at the proven
+experimental Jolt 0.8.21 for this containment change; upgrading is separate work.
+
 ## Final status / follow-ups (not advertised as completed)
 
 **Working optional Jolt + actual Slipstream Wasm prototype**, with shared model

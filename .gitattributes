@@ -1,0 +1,2 @@
+# Preserve upstream patch context exactly, including whitespace-only lines.
+web/toolchain/patches/*.patch -whitespace
