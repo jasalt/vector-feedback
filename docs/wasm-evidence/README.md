@@ -1,5 +1,10 @@
 # Slipstream Wasm prototype evidence
 
+These top-level reports preserve the **original sibling-based integration**.
+For the current repo-owned bootstrap and changed direct-ABI findings, see
+[self-contained/](self-contained/README.md). Historical failures below are not
+claims that the current consistently generated toolchain still fails those calls.
+
 Small retained reports and one vision-inspected screenshot. Generated runtime,
 boots, logs and additional screenshots remain under ignored `.cache/wasm/`.
 All passing browser reports use HTTP automation, Chromium 152 and SwiftShader.

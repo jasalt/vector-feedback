@@ -7,6 +7,10 @@ renderer, `jolt -M:run`, dependencies and setup primary and unchanged. Do not
 substitute Raylib or a separately reimplemented feedback renderer. Reuse the
 sibling Chez/Wasm experiment only after proving Slipstream's graphics layer.
 
+**Current status:** the active build is now self-contained in this repo. The
+chronological entries below retain the original sibling-based experiments;
+the self-contained follow-up supersedes their prerequisites and ABI findings.
+
 Use small atomic commits. Track observations here, including failed gates;
 build success is not browser/render success. Keep generated artifacts ignored.
 Do not modify dependency caches or sibling repositories: apply reproducible
@@ -236,7 +240,7 @@ and next action. Partial witnesses must not be labeled a working Jolt port.
   source and native setup are unchanged. No sibling repository/cache was edited
   and no upstream patch or push was made. Work is split into atomic commits.
 
-## Self-contained build follow-up (in progress)
+## Self-contained build follow-up (complete)
 
 - [x] S0 — Own pinned Nix shell/lock, libffi checksum and reviewed Chez patch.
 - [x] S1 — Bootstrap matching native host, cross boots/xpatch, 32-bit target pack
@@ -272,8 +276,11 @@ float32 error), and pause/drags/wheel/tail variants 8–78/reset/blur/resize all
 in Chromium. The new DejaVu-backed screenshot was inspected: readable vector
 text and the expected colored projective feedback trails. Four stdlib-only
 build-tool tests pass. Commands use this repo's `nix develop` / `.#i686-cc` only.
-Documentation/evidence updates are being finalized; the older Pages branch is
-an independent static snapshot and is not silently overwritten by this change.
+Current commands are in `web/README.md` and fresh reports in
+`docs/wasm-evidence/self-contained/`. The full live-build entry point runs all
+stages; bootstrap cache reuse and stale-fingerprint rejection were also tested.
+The older Pages branch is an independent static snapshot and is not silently
+overwritten by this change.
 
 ## Final status / follow-ups (not advertised as completed)
 
@@ -281,9 +288,10 @@ an independent static snapshot and is not silently overwritten by this change.
 and shader, browser controls and parity evidence. It is not a general Slipstream
 or Glimmer browser release. Follow-ups before production/upstreaming:
 
-- Replace prepared sibling build-tree prerequisites with a clean pinned bootstrap.
-- Upgrade/validate the cross toolchain against the desktop's supported Jolt
-  version; reduce/report the mixed float/uint64 ABI failures upstream.
+- Upgrade/validate the owned cross toolchain against the desktop's supported
+  Jolt version. The old mixed float/uint64 failures no longer reproduce with
+  consistently generated patched hosts/xpatches/targets; full FFI/closure
+  conformance remains broader than the exercised direct calls.
 - Generalize the platform/FFI boundary if full Glimmer scene reuse is required.
 - Profile model allocation/bytecode execution, FFI writes and driver waits;
   remove test instrumentation from a future performance build and test hardware

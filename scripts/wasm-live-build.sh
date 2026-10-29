@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# Convenience entry point; prerequisites are built by the repo-owned bootstrap.
+# Full opt-in browser build, including all owned prerequisites and shader emission.
 set -euo pipefail
+cd "$(dirname "$0")/.."
+bash scripts/wasm-bootstrap.sh
+bash scripts/wasm-build.sh
 export WASM_MODE=live
-exec bash "$(dirname "$0")/wasm-abi-build.sh" "$@"
+exec bash scripts/wasm-abi-build.sh "$@"

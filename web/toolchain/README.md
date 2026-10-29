@@ -20,8 +20,10 @@ word-size patch is already upstream in the pinned version and is not reapplied.
 
 Stage stamps allow retries after build failures. Fingerprints cover the lock,
 pins and Chez patch. A changed fingerprint fails with cleanup instructions;
-never combine a stale pack with a new host. `WASM_BUILD_ROOT` selects a fresh
-cache for clean-room validation; default is `.cache/wasm/`.
+never combine a stale pack with a new host. Bump the bootstrap schema when
+changing build logic/flags in a way that affects boot/ABI compatibility.
+`WASM_BUILD_ROOT` selects a fresh cache for clean-room validation; default is
+`.cache/wasm/`. The full entry point is `nix develop -c bash scripts/wasm-live-build.sh`.
 
 ## Chez patch provenance and scope
 
@@ -40,4 +42,6 @@ make the sibling a build-time dependency.
 When changing the patch, regenerate **both** the host/xpatch and target boots.
 The previous integration mixed an unpatched native host with patched targets;
 its direct mixed-call ABI failures must be retested, not assumed identical with
-this newly consistent bootstrap. The bounded pointer adapter remains in use.
+this newly consistent bootstrap. Fresh-cache validation now passes both direct
+mixed calls (path count and float scale) and the bounded pointer adapter. The
+adapter remains in use for bulk uploads; this is not full FFI/closure conformance.

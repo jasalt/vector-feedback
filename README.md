@@ -44,8 +44,15 @@ Or set `SLIPSTREAM_TEST_FONT`.
 Desktop remains the primary renderer. An optional **Jolt + Slipstream WebGL2/Wasm**
 prototype shares the model and feedback shader. See [web/README.md](web/README.md)
 for build/serve commands and [docs/wasm-plan.md](docs/wasm-plan.md) for progress,
-validation and limitations. It currently depends on the prepared sibling Chez/Wasm
-experiment toolchain; it is not a general Slipstream/Glimmer browser release.
+validation and limitations. The repo owns a pinned Linux x86_64 Nix toolchain
+and builds its Chez cross compiler/libffi prerequisites from upstream sources;
+no sibling checkout is required. It is not a general Slipstream/Glimmer browser release.
+
+```sh
+nix develop -c bash scripts/wasm-live-build.sh
+python3 web/serve.py
+# http://127.0.0.1:8000/scheme.html
+```
 
 ## Controls
 

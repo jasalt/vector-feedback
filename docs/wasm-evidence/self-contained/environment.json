@@ -1,0 +1,60 @@
+{
+  "validationCache": "fresh .cache/wasm-selfcontained; no prepared project artifacts imported",
+  "sourceCommitBeforeFinalDocumentation": "d7d76c5b14bbfff1601e31d484a11de0277ba7ca",
+  "sourcePins": {
+    "schema": 1,
+    "jolt": "5b46858a171f30949f5b09eb484bc6c5ff93c6ea",
+    "chez": "7fadeee45fcc0135b17f5c1a926157004f898339",
+    "libffi": {
+      "version": "3.5.2",
+      "url": "https://github.com/libffi/libffi/releases/download/v3.5.2/libffi-3.5.2.tar.gz",
+      "sha256": "f3a3082a23b37c293a4fcd1053147b371f2ff91fa7ea1b2a52e335676bac82dc"
+    }
+  },
+  "flakeLockSHA256": "b53349c0c7b1c6b1d3483212230c6acfc8ade95d16af3a928cf8c01b3a6899df",
+  "chezPatchSHA256": "6a630204b734b06361cc74a2c75204eda29095e20debacbd43367c1b391f1a16",
+  "toolchainFingerprint": "171a746623d6877142312415325a37afbf455d9427ca4d01869f2d856a41ee0e",
+  "bootstrapArtifactSHA256": {
+    "chez/ta6le/bin/ta6le/scheme": "3ad8bec7f06750dd377f91cb14a157649343b8c81495df1d031b0c5803fa177d",
+    "pack/xpatch": "9719aa699c5f8f37b83b36cafa5bee2ddd9775381b547f0dc6ff048c899dec11",
+    "pack/petite.boot": "dca8b88a5be90172b53005ecc709b21c1e1b5bf8b3367f4bd4c831ac9f35b07f",
+    "pack/scheme.boot": "00c8ca0fe4773a30af1d1d1f31421ec205fd95c1956da37cc28b5afe0062b414",
+    "pack/libkernel.a": "0bd0ebdcfe415ac75f3f628b2e9d8d00ce92afcd2d4496ffd5e6df814543cf6a",
+    "libffi/install/lib/libffi.a": "863c655681a9de2f0934efbaf2b6ebb32310237411ff96db5b82ad94c661c6cc"
+  },
+  "nativeHostFileType": ".cache/wasm-selfcontained/toolchain/chez/ta6le/bin/ta6le/scheme: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /nix/store/n51dhmdbik1kfrsm62j5knavmigwrl1a-glibc-2.42-84/lib/ld-linux-x86-64.so.2, for GNU/Linux 3.10.0, not stripped",
+  "targetKernelFileType": ".cache/wasm-selfcontained/toolchain/chez/tpb32l/bin/tpb32l/scheme: ELF 32-bit LSB pie executable, Intel i386, version 1 (SYSV), dynamically linked, interpreter /nix/store/vm6fz47y86q6f1mhwsmy8f2cqn2ykqf6-glibc-2.42-84/lib/ld-linux.so.2, for GNU/Linux 3.10.0, not stripped",
+  "font": {
+    "name": "DejaVuSansMono.ttf",
+    "sha256": "9d9bfebceb1c3f6f4ad383ded568a6926086208f43f7f92f92f7e93a1383fa38",
+    "licenseIncluded": true
+  },
+  "bootstrapReusePassed": true,
+  "staleFingerprintRejected": true,
+  "buildToolUnitTests": 4,
+  "note": "The direct mixed ABI calls now pass with consistently regenerated patched host/xpatch/target. No universal FFI or bit-reproducibility claim.",
+  "buildSourceSHA256": {
+    "flake.nix": "9aacf7380d8c9c500b9893114fcef09cffeb6c9fe2c7c3d28bb2b4de329a694f",
+    "flake.lock": "b53349c0c7b1c6b1d3483212230c6acfc8ade95d16af3a928cf8c01b3a6899df",
+    "scripts/wasm-bootstrap.sh": "1f9997551b77dcd3561bc13a9aaef1a7a4bab7052f7468a07313dc252d07affd",
+    "scripts/wasm-common.sh": "708873345038bf32df7b899b887e5791599574587000287c44a04beeaf2dd36f",
+    "scripts/wasm-build.sh": "b0a8f3ce6c52a598308af8ea530a46e079f44575fc391b37ab753a814660ae07",
+    "scripts/wasm-abi-build.sh": "31840c47064be23874c3d9da77ab7477ab68854c7ca38abea30009c061388220",
+    "scripts/wasm-live-build.sh": "cd9815cbb26fb97d2ef3813bc7d46be4bbb1362486284ec514650bfabf5b77e5",
+    "web/prepare_chez.py": "56797ac09501239a91be3a08d453a346f8e766989b510a24e9ca8594b7ba5591",
+    "web/chez_host.c.inc": "85f660923e84c9056ce59b17964fc83957f6b3db58beebd1cbdb6a6de55e6042",
+    "web/prepare.py": "c506015394d4178256ca60bda34f827813f52a51e2a437391aa8aa41716aa0f1",
+    "web/CMakeLists.txt": "d288089ac99f7ceb9e07fe532c16e44ea6b90bc4a56cf0b42aca572511cf574f",
+    "web/abi/witness.clj": "948772d1b5818f004be8985dc10614e977611be0113f0202e46149d7eebcce7a",
+    "web/live/feedback/web.clj": "d6bb5d3c6a5d30b04047604d0273051dacd1ab465cdc03865e7da810bbbc5aca",
+    "src/feedback/model.clj": "54b7f7f417a13d7ca210bb8b92f55dfe6317005001b2930d0a49f73589fd67f1",
+    "src/feedback/visuals.clj": "990f54ce9661877d4238356aa0933a53d4f4d0ca3e4d2117ee2cc7d13ae7cb40"
+  },
+  "flakeEvaluationPassed": true,
+  "desktopTests": {
+    "tests": 7,
+    "assertions": 33,
+    "failures": 0,
+    "errors": 0
+  }
+}

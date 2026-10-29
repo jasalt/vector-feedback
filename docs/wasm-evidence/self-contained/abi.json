@@ -1,0 +1,35 @@
+{
+  "scene": "abi",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "requestFailures": [],
+  "messages": [
+    "UINT64-OBSERVED 4 0 RAW-PATH-RESULT 0",
+    "FLOAT-MEMORY-OBSERVED -1180",
+    "DEFINE-SHAPE-OBSERVED scale=1 origin=0 x=0 y=0",
+    "RAW-FLOAT-RESULT 0",
+    "SLIPSTREAM-WASM-ABI-PASS"
+  ],
+  "navigationToReadyMs": 1122.3483009962365,
+  "isolated": true,
+  "ready": true,
+  "status": "READY: Slipstream ABI host returned",
+  "canvasDimensions": {
+    "width": 960,
+    "height": 600,
+    "css": "max-width: 100%; width: 960px; height: auto; touch-action: none;",
+    "box": {
+      "x": 8,
+      "y": 147.8125,
+      "width": 960,
+      "height": 600,
+      "top": 147.8125,
+      "right": 968,
+      "bottom": 747.8125,
+      "left": 8
+    }
+  },
+  "browser": "152.0.7977.64",
+  "page.png_sha256": "e2a907e15e378ae48cb899cba32a96eee5952977bdf4ea64f89bbf5e114d3ffa",
+  "canvas.png_sha256": "d4bf7484d394d315e46c09a86e1f67289b8275fd38b56972a517228cdf40f2dd"
+}

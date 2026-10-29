@@ -1,0 +1,54 @@
+{
+  "scene": "live",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "requestFailures": [],
+  "messages": [
+    "SLIPSTREAM-JOLT-LIVE-BOOT",
+    "GL: OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium))"
+  ],
+  "navigationToReadyMs": 3977.437049965374,
+  "isolated": true,
+  "modelState": {
+    "frames": 64,
+    "paused": false,
+    "time": 1.0833333730697632,
+    "zoom": 0.9649999737739563,
+    "panX": 0.00800000037997961,
+    "panY": 0,
+    "yaw": 0.012000000104308128,
+    "pitch": -0.00800000037997961,
+    "roll": 0.02500000037252903,
+    "tail": 48
+  },
+  "fixtureParity": {
+    "components": 434,
+    "ticks": 65,
+    "maxAbsError": 0.0
+  },
+  "ready": true,
+  "status": "Jolt + Slipstream WebGL2 / LIVE / frame 64 / time 1.08 / zoom 0.965 / tail 48",
+  "lastFrameMetrics": {
+    "modelAndFFIMs": 77.014892578125,
+    "renderAndDriverMs": 513.460205078125,
+    "wasmCapacityBytes": 104529920
+  },
+  "canvasDimensions": {
+    "width": 960,
+    "height": 600,
+    "css": "max-width: 100%; touch-action: none;",
+    "box": {
+      "x": 8,
+      "y": 147.8125,
+      "width": 960,
+      "height": 600,
+      "top": 147.8125,
+      "right": 968,
+      "bottom": 747.8125,
+      "left": 8
+    }
+  },
+  "browser": "152.0.7977.64",
+  "page.png_sha256": "843348fa1ac9ca4208a6baf3cc1653f7aa0fdb8c8bfb00ae3a9b354fb8b2c8fa",
+  "canvas.png_sha256": "840161a8b4da335423b6ccff67841aa02fb6b347bddefea09a0798a11bd99c91"
+}
