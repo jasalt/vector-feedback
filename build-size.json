@@ -1,0 +1,31 @@
+{
+  "files": {
+    "scheme.html": {
+      "bytes": 2509,
+      "gzip9Bytes": 1085,
+      "sha256": "ee51aba70b3435aab14f46bd5b424df136868da433c24c3d8fb2af5f5fa17039"
+    },
+    "scheme.js": {
+      "bytes": 408685,
+      "gzip9Bytes": 101836,
+      "sha256": "f1e8abbdab7e38eb807610caba1351866648bab4716a0c480a9e30f27e91531f"
+    },
+    "scheme.wasm": {
+      "bytes": 2283465,
+      "gzip9Bytes": 705887,
+      "sha256": "bb180bda0737cd2525d021531fb55e940a00feaada4d909aee8ee973df263fbc"
+    },
+    "scheme.data": {
+      "bytes": 17261797,
+      "gzip9Bytes": 9423472,
+      "sha256": "e189eb441a465bb374a692aa02c90798af937267efe2d216b301bc03da6aa98a"
+    }
+  },
+  "totalBytes": 19956456,
+  "totalGzip9Bytes": 10232280,
+  "notes": [
+    "Boot and preloaded font are already inside scheme.data.",
+    "Excludes source/licenses; gzip is per-file, not measured transfer.",
+    "Assertions, pthreads and C++ exception handling are enabled."
+  ]
+}

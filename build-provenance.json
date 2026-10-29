@@ -1,0 +1,23 @@
+{
+  "sourceCommit": "d8963ae4056caa7565566a92509d67f1a90114c4",
+  "packaging": "Current local live runtime copied without recompilation; fresh Pages-style browser gate validates these exact packaged assets.",
+  "comparisonToRetainedEarlierSnapshot": {
+    "scheme.html": {
+      "sameSHA256": true,
+      "byteDelta": 0
+    },
+    "scheme.js": {
+      "sameSHA256": false,
+      "byteDelta": 0
+    },
+    "scheme.wasm": {
+      "sameSHA256": true,
+      "byteDelta": 0
+    },
+    "scheme.data": {
+      "sameSHA256": false,
+      "byteDelta": 2
+    }
+  },
+  "note": "Current JS hash differs and preloaded data is 2 bytes larger than the earlier measurement. No cause or bit-reproducibility is inferred; current package hashes are authoritative."
+}

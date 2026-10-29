@@ -1,0 +1,33 @@
+{
+  "desktopSourceSHA256": {
+    "src/feedback/model.clj": "54b7f7f417a13d7ca210bb8b92f55dfe6317005001b2930d0a49f73589fd67f1",
+    "src/feedback/visuals.clj": "990f54ce9661877d4238356aa0933a53d4f4d0ca3e4d2117ee2cc7d13ae7cb40",
+    "src/feedback/main.clj": "d05c8914085e88a48d0e72288949dd9e56720f77637134bcfbe2e99b3393e9a7",
+    "test/feedback/test_runner.clj": "04195ea5d58259d529fbcac549844acd149749ae97ea7a23c05878fe3147d277"
+  },
+  "pins": {
+    "slipstream": "d2f7f3d87a37ffcf25e66c27b88e91d4480ea308",
+    "slughorn": "3ad0529d59a87bc29bb56ea91c02eae073ce6e97",
+    "msdfgen": "e06c7eaaaa071445ec77a1d73f942889f796b70b",
+    "jolt": "5b46858a171f30949f5b09eb484bc6c5ff93c6ea",
+    "chez": "7fadeee45fcc0135b17f5c1a926157004f898339"
+  },
+  "tools": {
+    "emscripten": "6.0.8-git",
+    "chromium": "152.0.7977.64 / SwiftShader",
+    "playwright": "1.64.1",
+    "pillow": "13.0.0"
+  },
+  "font": {
+    "name": "AdwaitaMono-Regular.ttf",
+    "sha256": "0edc6a8d8ca249f594dee661b2f57f1a3baa33bc7aca826c6a9fe27b06f9f930",
+    "licenseIncluded": true
+  },
+  "desktopTests": {
+    "tests": 7,
+    "assertions": 33,
+    "failures": 0,
+    "errors": 0,
+    "captureFrames": 65
+  }
+}

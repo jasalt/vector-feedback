@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Picture Plane — Jolt + Slipstream</title>
+  <style>
+    :root {color-scheme:dark;font-family:system-ui,sans-serif;background:#101923;color:#d8e7ef}
+    main {max-width:48rem;margin:4rem auto;padding:1rem} a {color:#8fdcce}
+  </style>
+</head>
+<body><main>
+<h1>Picture Plane</h1>
+<p>Experimental Jolt + Slipstream vector feedback in WebAssembly.</p>
+<p id="status" role="status">Preparing cross-origin isolation…</p>
+<p>The first visit reloads once to enable the threaded runtime. Approximately
+20 MB of uncompressed runtime assets; performance depends on your browser/GPU.</p>
+<p><a href="./README.md">Build and hosting notes</a> · <a href="./THIRD-PARTY-NOTICES.md">Dependency notices</a></p>
+</main>
+<script type="module">
+const status = document.querySelector('#status');
+const retryKey = 'picture-plane-isolation:' + new URL('./', location.href).pathname;
+try {
+  if (!isSecureContext || !('serviceWorker' in navigator))
+    throw new Error('This runtime needs HTTPS (or localhost) and service-worker support.');
+  await navigator.serviceWorker.register('./coi-serviceworker.js', {scope:'./'});
+  await navigator.serviceWorker.ready;
+  if (!navigator.serviceWorker.controller || !crossOriginIsolated) {
+    if (sessionStorage.getItem(retryKey)) {
+      sessionStorage.removeItem(retryKey);
+      throw new Error('Cross-origin isolation unavailable. Allow service workers, clear this site’s data and retry.');
+    }
+    sessionStorage.setItem(retryKey, '1');
+    location.reload();
+  } else {
+    sessionStorage.removeItem(retryKey);
+    location.replace('./runtime/scheme.html');
+  }
+} catch (error) {
+  status.textContent = 'Unable to launch: ' + error.message;
+}
+</script>
+</body></html>

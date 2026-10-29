@@ -1,0 +1,5 @@
+# Preserve generated runtime and upstream notice bytes exactly.
+runtime/** -text
+runtime/scheme.js -whitespace
+licenses/** -text -whitespace
+evidence/*.png -text
